@@ -20,11 +20,6 @@ export default {
   },
   methods: {
     async addCourse(course: Course) {
-      if (!course) return
-
-      this.nameError = validateCourseName(course.name).errors
-      if (this.nameError.length > 0) return
-
       const response = await addCourse(course)
 
       // Handle error response

@@ -17,7 +17,6 @@ export default {
       course: null as Course | null,
       id: '',
       errorMessage: '',
-      nameError: [] as string[],
     }
   },
   mounted() {
@@ -39,12 +38,8 @@ export default {
       this.id = id
     },
     async editCourse(course: Course) {
-      if (!course) return
-
-      this.nameError = validateCourseName(course.name).errors
-      if (this.nameError.length > 0) return
-
       const response = await updateCourse(this.id, course)
+
       if ('message' in response) {
         if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
         else this.errorMessage = response.message as string
@@ -67,6 +62,6 @@ export default {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <CourseForm v-if="course" :course="course" :errors="nameError" @formData="editCourse" />
+    <CourseForm v-if="course" :course="course" @formData="editCourse" />
   </section>
 </template>

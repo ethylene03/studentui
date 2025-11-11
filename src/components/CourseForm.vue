@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Course } from '@/models/courses'
+import { validateCourseName } from '@/validation/courses'
 import type { PropType } from 'vue'
 
 export default {
@@ -11,18 +12,20 @@ export default {
         name: '',
       }),
     },
-    errors: {
-      type: Array as PropType<string[]>,
-      default: () => [],
-    },
   },
   data() {
     return {
       courseCopy: { ...this.course },
+      errors: [] as string[],
     }
   },
   methods: {
     submitCourse() {
+      if (!this.courseCopy) return
+
+      this.errors = validateCourseName(this.courseCopy.name).errors
+      if (this.errors.length > 0) return
+
       this.$emit('formData', this.courseCopy)
     },
   },
