@@ -1,5 +1,5 @@
 import type { ErrorResponse } from '@/models/global'
-import type { User, UserToken } from '@/models/users'
+import type { User, UserCredentials, UserToken } from '@/models/users'
 import axios, { AxiosError } from 'axios'
 
 const api = axios.create({
@@ -8,7 +8,7 @@ const api = axios.create({
   withCredentials: true,
 })
 
-async function login(user: User): Promise<UserToken | ErrorResponse> {
+async function login(user: UserCredentials): Promise<UserToken | ErrorResponse> {
   try {
     const response = await api.post('/auth/login', user)
     return response.data as UserToken
@@ -17,7 +17,7 @@ async function login(user: User): Promise<UserToken | ErrorResponse> {
   }
 }
 
-async function signup(user: User): Promise<User | ErrorResponse> {
+async function signup(user: UserCredentials): Promise<User | ErrorResponse> {
   try {
     const response = await api.post('/auth/signup', user)
     return response.data as User

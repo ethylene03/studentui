@@ -3,3 +3,8 @@ export interface ErrorResponse {
   error: number
   status: string
 }
+
+export interface ValidationError {
+  field: string
+  errors: string[]
+}
