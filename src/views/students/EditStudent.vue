@@ -36,8 +36,6 @@ export default {
       this.id = id
     },
     async editStudent(student: Student) {
-      if (!student) return
-
       const response = await updateStudent(this.id, student)
       if ('message' in response) {
         if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)

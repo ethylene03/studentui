@@ -42,6 +42,7 @@ export default {
       this.pages = response.pages
       this.students = response.data
     },
+
     async deleteItem(id: string) {
       if (!id) return
       const toast = document.getElementById('toast--success')
@@ -53,6 +54,7 @@ export default {
         this.fetchStudents()
       }
     },
+
     onClickSort() {
       this.sortBy = this.sortBy === 'asc' ? 'desc' : 'asc'
       this.fetchStudents()

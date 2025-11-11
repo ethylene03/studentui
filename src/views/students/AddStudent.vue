@@ -18,8 +18,6 @@ export default {
   },
   methods: {
     async addStudent(student: Student) {
-      if (!student) return
-
       const response = await addStudent(student)
 
       // Handle error response

@@ -1,7 +1,9 @@
 <script lang="ts">
 import { getCourses } from '@/api/courses'
 import type { Course } from '@/models/courses'
+import type { ValidationError } from '@/models/global'
 import type { Student } from '@/models/students'
+import { validateAll } from '@/validation/students'
 import type { PropType } from 'vue'
 
 export default {
@@ -23,6 +25,7 @@ export default {
     return {
       studentCopy: { ...this.student },
       courses: [] as Course[],
+      errors: [] as ValidationError[],
     }
   },
   mounted() {
@@ -39,16 +42,26 @@ export default {
       this.courses = response.data
     },
 
-    submitStudent(event: Event) {
-      event.preventDefault()
+    submitStudent() {
+      if (!this.studentCopy) return
+
+      this.errors = validateAll(this.studentCopy)
+      console.log(this.errors)
+      if (this.errors.filter((e) => e.errors.length > 0).length > 0) return
+
       this.$emit('formData', this.studentCopy)
+    },
+
+    getErrors(field: keyof Student): string[] {
+      const errorObj = this.errors.find((e) => e.field === field)
+      return errorObj ? errorObj.errors : []
     },
   },
 }
 </script>
 
 <template>
-  <form id="students--form" class="container my-5" @submit="submitStudent">
+  <form id="students--form" class="container my-5" @submit.prevent="submitStudent">
     <div class="row g-4 mb-3">
       <div class="col-md-2">
         <label for="studentId" class="form-label">
@@ -78,6 +91,13 @@ export default {
           v-model="studentCopy.firstName"
           required
         />
+        <div
+          class="form-text text-danger mt-1"
+          v-for="error in getErrors('firstName')"
+          :key="error"
+        >
+          {{ error }}
+        </div>
       </div>
       <div class="col-md-5">
         <label for="lastName" class="form-label">
@@ -92,6 +112,9 @@ export default {
           v-model="studentCopy.lastName"
           required
         />
+        <div class="form-text text-danger mt-1" v-for="error in getErrors('lastName')" :key="error">
+          {{ error }}
+        </div>
       </div>
     </div>
     <div class="row g-4 mb-3">
@@ -108,6 +131,9 @@ export default {
           v-model="studentCopy.email"
           required
         />
+        <div class="form-text text-danger mt-1" v-for="error in getErrors('email')" :key="error">
+          {{ error }}
+        </div>
       </div>
       <div class="col-md-2">
         <label for="age" class="form-label">
@@ -116,13 +142,14 @@ export default {
         </label>
         <input
           type="number"
-          min="1"
-          max="100"
           class="form-control"
           id="age"
           placeholder="0"
           v-model="studentCopy.age"
         />
+        <div class="form-text text-danger mt-1" v-for="error in getErrors('age')" :key="error">
+          {{ error }}
+        </div>
       </div>
       <div class="col-md-5">
         <label for="course" class="form-label">
