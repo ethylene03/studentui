@@ -4,6 +4,7 @@ import CourseForm from '@/components/CourseForm.vue'
 import Navbar from '@/components/Navbar.vue'
 import { getMessage } from '@/helpers/utils'
 import type { Course } from '@/models/courses'
+import { validateCourseName } from '@/validation/courses'
 
 export default {
   name: 'EditCourse',
@@ -16,6 +17,7 @@ export default {
       course: null as Course | null,
       id: '',
       errorMessage: '',
+      nameError: [] as string[],
     }
   },
   mounted() {
@@ -38,6 +40,9 @@ export default {
     },
     async editCourse(course: Course) {
       if (!course) return
+
+      this.nameError = validateCourseName(course.name).errors
+      if (this.nameError.length > 0) return
 
       const response = await updateCourse(this.id, course)
       if ('message' in response) {
@@ -62,6 +67,6 @@ export default {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <CourseForm v-if="course" :course="course" @formData="editCourse" />
+    <CourseForm v-if="course" :course="course" :errors="nameError" @formData="editCourse" />
   </section>
 </template>

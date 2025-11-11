@@ -44,6 +44,7 @@ export default {
       this.pages = response.pages
       this.courses = response.data
     },
+
     async deleteItem(id: string) {
       if (!id) return
       const toast = document.getElementById('toast--success')
@@ -55,6 +56,7 @@ export default {
         this.fetchCourses(true)
       }
     },
+    
     onClickSort() {
       this.sortBy = this.sortBy === 'asc' ? 'desc' : 'asc'
       this.fetchCourses()

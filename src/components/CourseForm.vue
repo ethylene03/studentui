@@ -11,6 +11,10 @@ export default {
         name: '',
       }),
     },
+    errors: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -40,6 +44,9 @@ export default {
         v-model="courseCopy.name"
         required
       />
+      <div class="form-text text-danger mt-1" v-for="error in errors" :key="error">
+        {{ error }}
+      </div>
     </div>
     <div class="d-flex flex-wrap mt-5 gap-4">
       <button
