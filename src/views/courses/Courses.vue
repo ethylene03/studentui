@@ -96,7 +96,7 @@ export default {
 
     <div class="container mt-5 text-center text-md-start">
       <h2>Course Directory</h2>
-      <p class="lead">Total courses offered: {{ totalCount }}</p>
+      <p class="lead text-primary">Total courses offered: {{ totalCount }}</p>
       <ActionBar
         label="Course"
         :sortOptions="Object.keys(courses[0] || {})"
