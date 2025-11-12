@@ -1,8 +1,12 @@
 :root {
-  --bs-primary: #a877f8;
+  --bs-primary: #8741f8;
   --bs-primary-text-emphasis: #6f42c1;
   --bs-primary-bg-subtle: #ead7ff;
   --bs-primary-border-subtle: #d6bfff;
+}
+
+.text-primary {
+  color: var(--bs-primary) !important;
 }
 
 .btn-primary {

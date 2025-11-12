@@ -40,9 +40,11 @@ export default {
       else this.$router.replace({ query: { page: '1' } })
 
       const sort = this.sortWith === '' ? 'id,asc' : `${this.sortWith},${this.sortBy}`
+      const size = 7
 
       const response = await getCourses({
         page,
+        size,
         sort,
         ...(this.query ? { name: this.query } : {}),
       })

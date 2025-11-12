@@ -73,7 +73,7 @@ export default {
             </option>
           </template>
         </select>
-        <button class="btn" @click="onClickSort">
+        <button class="btn text-primary" @click="onClickSort">
           <i v-if="sortBy === 'asc'" class="fas fa-arrow-down-a-z"></i>
           <i v-else class="fas fa-arrow-up-a-z"></i>
         </button>

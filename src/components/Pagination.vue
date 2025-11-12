@@ -8,8 +8,29 @@ export default {
       required: true,
     },
   },
+  methods: {
+    getPagination(current: number, total: number) {
+      const pages: (number | string)[] = []
+
+      if (total <= 5) for (let i = 1; i <= total; i++) pages.push(i)
+      else {
+        pages.push(1)
+
+        if (current > 3) pages.push('…')
+
+        const start = Math.max(2, current - 1)
+        const end = Math.min(total - 1, current + 1)
+        for (let i = start; i <= end; i++) pages.push(i)
+
+        if (current < total - 3) pages.push('…')
+
+        pages.push(total)
+      }
+      return pages
+    },
+  },
   computed: {
-    page(): number {
+    currentPage(): number {
       const page = parseInt(this.$route.query.page as string) || 1
       return page
     },
@@ -24,56 +45,36 @@ export default {
     v-if="pages > 1"
   >
     <ul class="pagination mb-0">
-      <li class="page-item" style="cursor: pointer" :class="{ disabled: page <= 1 }">
+      <li class="page-item" style="cursor: pointer" :class="{ disabled: currentPage <= 1 }">
         <a
-          class="page-link text-black"
+          class="page-link text-primary"
           aria-label="Previous"
-          @click="$router.push({ query: { page: 1 } })"
-        >
-          <span aria-hidden="true">
-            <i class="fas fa-angles-left"></i>
-          </span>
-        </a>
-      </li>
-      <li class="page-item" style="cursor: pointer" :class="{ disabled: page <= 1 }">
-        <a
-          class="page-link text-black"
-          aria-label="Previous"
-          @click="$router.push({ query: { page: page - 1 } })"
+          @click="$router.push({ query: { page: currentPage - 1 } })"
         >
           <span aria-hidden="true">
             <i class="fas fa-angle-left"></i>
           </span>
         </a>
       </li>
+
       <li
-        v-for="n in pages"
+        v-for="n in getPagination(currentPage, pages)"
         :key="n"
         class="page-item"
         style="cursor: pointer"
-        :class="{ disabled: n === page }"
+        :class="{ disabled: n === currentPage || n === '…' }"
       >
-        <a class="page-link text-black" @click="$router.push({ query: { page: n } })">{{ n }}</a>
+        <a class="page-link text-primary" @click="$router.push({ query: { page: n } })">{{ n }}</a>
       </li>
-      <li class="page-item" style="cursor: pointer" :class="{ disabled: page >= pages }">
+
+      <li class="page-item" style="cursor: pointer" :class="{ disabled: currentPage >= pages }">
         <a
-          class="page-link text-black"
+          class="page-link text-primary"
           aria-label="Next"
-          @click="$router.push({ query: { page: page + 1 } })"
+          @click="$router.push({ query: { page: currentPage + 1 } })"
         >
           <span aria-hidden="true">
             <i class="fas fa-angle-right"></i>
-          </span>
-        </a>
-      </li>
-      <li class="page-item" style="cursor: pointer" :class="{ disabled: page >= pages }">
-        <a
-          class="page-link text-black"
-          aria-label="Next"
-          @click="$router.push({ query: { page: pages } })"
-        >
-          <span aria-hidden="true">
-            <i class="fas fa-angles-right"></i>
           </span>
         </a>
       </li>

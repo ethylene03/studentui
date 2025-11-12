@@ -36,7 +36,7 @@ export default {
 <template>
   <section
     id="table"
-    class="container my-3 table-responsive flex-grow-1 d-flex flex-column justify-content-between"
+    class="container my-3 table-responsive flex-grow-1 d-flex flex-column justify-content-start"
     style="min-height: 500px"
   >
     <div id="table--empty" v-if="data.length === 0">
