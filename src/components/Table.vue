@@ -36,8 +36,8 @@ export default {
 <template>
   <section
     id="table"
-    class="container my-3 table-responsive flex-grow-1 d-flex flex-column justify-content-start"
-    style="min-height: 500px"
+    class="container my-3 table-responsive d-flex flex-column justify-content-between rounded-3 bg-white"
+    style="min-height: 400px"
   >
     <div id="table--empty" v-if="data.length === 0">
       <p class="text-center my-5">No data available.</p>

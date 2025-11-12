@@ -58,7 +58,7 @@ export default {
           v-model="query"
           :placeholder="'Search ' + label + '...'"
         />
-        <button class="input-group-text bg-transparent border-0" @click="searchText">
+        <button class="input-group-text bg-transparent border-0 text-primary" @click="searchText">
           <i class="fas fa-magnifying-glass"></i>
         </button>
       </div>
@@ -66,14 +66,14 @@ export default {
       <div class="d-flex align-items-center gap-3">
         <label for="sortWith" class="text-nowrap mb-0">Sort By:</label>
         <select v-model="sortWith" class="form-select border border-primary">
-          <option value="">Sort by..</option>
+          <option value="" hidden>Sort by..</option>
           <template v-for="option in sortOptions" :key="option">
             <option v-if="option !== 'id'" :value="option">
               {{ camelToTitle(option as string) }}
             </option>
           </template>
         </select>
-        <button class="btn text-primary" @click="onClickSort">
+        <button class="btn text-primary border border-primary bg-white" @click="onClickSort" :class="{ disabled: !sortWith }">
           <i v-if="sortBy === 'asc'" class="fas fa-arrow-down-a-z"></i>
           <i v-else class="fas fa-arrow-up-a-z"></i>
         </button>
