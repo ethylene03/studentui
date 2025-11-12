@@ -42,6 +42,7 @@ export default {
     <div class="container mt-5 text-center text-md-start">
       <h2>Add New Student</h2>
       <p>Please fill in the details below.</p>
+      <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
     <StudentForm @formData="addStudent" />
