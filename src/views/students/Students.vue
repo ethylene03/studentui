@@ -43,7 +43,7 @@ export default {
         return
       }
 
-      this.totalCount = response.total
+      this.totalCount = this.query ? this.totalCount : response.total
       this.pages = response.pages
       this.students = response.data
     },
