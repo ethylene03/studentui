@@ -54,7 +54,7 @@ export default {
     <div class="d-flex flex-wrap mt-5 gap-4">
       <button
         type="button"
-        class="btn btn-light border border-primary-subtle flex-fill"
+        class="btn btn-outline-primary bg-white flex-fill"
         @click="$router.back()"
       >
         Cancel

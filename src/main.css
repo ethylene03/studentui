@@ -1,0 +1,43 @@
+:root {
+  --bs-primary: #a877f8;
+  --bs-primary-text-emphasis: #6f42c1;
+  --bs-primary-bg-subtle: #ead7ff;
+  --bs-primary-border-subtle: #d6bfff;
+}
+
+.btn-primary {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--bs-primary-text-emphasis);
+  border-color: var(--bs-primary-text-emphasis);
+}
+
+.btn-outline-primary {
+  color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.border-primary {
+  border-color: var(--bs-primary) !important;
+}
+
+.nav-link {
+  color: var(--bs-primary);
+}
+
+.nav-link:hover {
+  color: var(--bs-primary-text-emphasis);
+}
+
+a {
+  color: var(--bs-primary);
+}

@@ -26,7 +26,7 @@ export default {
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Student Management System</a>
       <button
-        class="navbar-toggler"
+        class="navbar-toggler border-0"
         type="button"
         data-bs-toggle="collapse"
         data-bs-target="#navbarNav"
@@ -37,27 +37,31 @@ export default {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
+        <ul class="nav nav-underline ms-auto gap-5">
           <li class="nav-item">
             <a
               id="students"
               class="nav-link"
               :class="{ active: currentPath === 'students' }"
-              href="/students"
-              >Students</a
+              @click="$router.push('/students')"
+              style="cursor: pointer"
             >
+              Students
+            </a>
           </li>
           <li class="nav-item">
             <a
               id="courses"
               class="nav-link"
               :class="{ active: currentPath === 'courses' }"
-              href="/courses"
-              >Courses</a
+              @click="$router.push('/courses')"
+              style="cursor: pointer"
             >
+              Courses
+            </a>
           </li>
           <li class="border-start ps-4 nav-item">
-            <a class="nav-link" href="#" @click.prevent="logoutUser">
+            <a class="nav-link" href="#" @click="logoutUser">
               <i class="fas fa-right-from-bracket me-1"></i>
               Logout
             </a>
@@ -69,6 +73,11 @@ export default {
 </template>
 
 <style scoped>
+.navbar-toggler {
+  outline: none;
+  box-shadow: none;
+}
+
 @media screen and (max-width: 576px) {
   .navbar-brand {
     font-size: medium;

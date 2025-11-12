@@ -15,11 +15,11 @@ body {
 }
 
 div#app {
-    font-family: Roboto, Helvetica, Arial, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 </style>
