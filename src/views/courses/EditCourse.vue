@@ -4,7 +4,6 @@ import CourseForm from '@/components/CourseForm.vue'
 import Navbar from '@/components/Navbar.vue'
 import { getMessage } from '@/helpers/utils'
 import type { Course } from '@/models/courses'
-import { validateCourseName } from '@/validation/courses'
 
 export default {
   name: 'EditCourse',

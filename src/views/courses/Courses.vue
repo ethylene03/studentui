@@ -21,6 +21,7 @@ export default {
       pages: 0,
       sortWith: '',
       sortBy: 'asc',
+      query: null as string | null,
       courses: [] as Course[],
     }
   },
@@ -34,7 +35,11 @@ export default {
 
       const sort = this.sortWith === '' ? 'id,asc' : `${this.sortWith},${this.sortBy}`
 
-      const response = await getCourses({ page, sort })
+      const response = await getCourses({
+        page,
+        sort,
+        ...(this.query ? { name: this.query } : {}),
+      })
       if ('message' in response) {
         console.error('Error fetching courses:', response.message)
         return
@@ -56,7 +61,7 @@ export default {
         this.fetchCourses(true)
       }
     },
-    
+
     onClickSort() {
       this.sortBy = this.sortBy === 'asc' ? 'desc' : 'asc'
       this.fetchCourses()
@@ -68,6 +73,10 @@ export default {
     },
     sortWith() {
       this.sortBy = 'asc'
+      this.fetchCourses()
+    },
+    query() {
+      this.$router.replace({ query: { page: '1' } })
       this.fetchCourses()
     },
   },
@@ -84,6 +93,7 @@ export default {
       <ActionBar
         label="Course"
         :sortOptions="Object.keys(courses[0] || {})"
+        @onSearchText="query = $event"
         @onClickSortBy="onClickSort"
         @onChangeSortWith="sortWith = $event"
       />

@@ -21,6 +21,7 @@ export default {
       pages: 0,
       sortWith: '',
       sortBy: 'asc',
+      query: null as string | null,
       students: [] as Student[],
     }
   },
@@ -32,7 +33,11 @@ export default {
       const page = this.$route.query.page ? Number(this.$route.query.page) - 1 : 0
       const sort = this.sortWith === '' ? 'id,asc' : `${this.sortWith},${this.sortBy}`
 
-      const response = await getStudents({ page, sort })
+      const response = await getStudents({
+        page,
+        sort,
+        ...(this.query ? { query: this.query } : {}),
+      })
       if ('message' in response) {
         console.error('Error fetching students:', response.message)
         return
@@ -68,6 +73,10 @@ export default {
       this.sortBy = 'asc'
       this.fetchStudents()
     },
+    query() {
+      this.$router.replace({ query: { page: '1' } })
+      this.fetchStudents()
+    },
   },
 }
 </script>
@@ -82,6 +91,7 @@ export default {
       <ActionBar
         label="Student"
         :sortOptions="Object.keys(students[0] || {})"
+        @onSearchText="query = $event"
         @onClickSortBy="onClickSort"
         @onChangeSortWith="sortWith = $event"
       />

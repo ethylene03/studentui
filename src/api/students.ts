@@ -32,7 +32,7 @@ async function getStudent(id: string): Promise<Student | ErrorResponse> {
 
 async function updateStudent(id: string, student: Student): Promise<Student | ErrorResponse> {
   try {
-    const response = await api.put('students/' + id, student)
+    const response = await api.put('/students/' + id, student)
     return response.data as Student
   } catch (error) {
     return (error as AxiosError).response?.data as ErrorResponse
@@ -41,7 +41,7 @@ async function updateStudent(id: string, student: Student): Promise<Student | Er
 
 async function deleteStudent(id: string): Promise<null | ErrorResponse> {
   try {
-    await api.delete('students/' + id)
+    await api.delete('/students/' + id)
     return null
   } catch (error) {
     return (error as AxiosError).response?.data as ErrorResponse

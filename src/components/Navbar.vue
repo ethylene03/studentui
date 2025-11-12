@@ -4,9 +4,6 @@ import { useAuthorizationStore } from '@/stores/authorization'
 
 export default {
   name: 'Navbar',
-  data() {
-    return {}
-  },
   methods: {
     async logoutUser() {
       await logout()
