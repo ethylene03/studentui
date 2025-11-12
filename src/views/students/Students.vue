@@ -6,6 +6,7 @@ import SuccessToast from '@/components/SuccessToast.vue'
 import Table from '@/components/Table.vue'
 import type { Student } from '@/models/students'
 import { Toast } from 'bootstrap'
+import { debounce } from 'lodash'
 
 export default {
   name: 'Students',
@@ -23,14 +24,21 @@ export default {
       sortBy: 'asc',
       query: null as string | null,
       students: [] as Student[],
+      debouncedFetch: null as ((query: string) => void) | null,
     }
   },
   mounted() {
     this.fetchStudents()
+    this.debouncedFetch = debounce(() => {
+      this.fetchStudents(true)
+    }, 500)
   },
   methods: {
-    async fetchStudents() {
-      const page = this.$route.query.page ? Number(this.$route.query.page) - 1 : 0
+    async fetchStudents(reset: boolean = false) {
+      let page = 0
+      if (this.$route.query.page && !reset) page = Number(this.$route.query.page) - 1
+      else this.$router.replace({ query: { page: '1' } })
+
       const sort = this.sortWith === '' ? 'id,asc' : `${this.sortWith},${this.sortBy}`
 
       const response = await getStudents({
@@ -73,9 +81,8 @@ export default {
       this.sortBy = 'asc'
       this.fetchStudents()
     },
-    query() {
-      this.$router.replace({ query: { page: '1' } })
-      this.fetchStudents()
+    query(value: string) {
+      this.debouncedFetch?.(value)
     },
   },
 }
