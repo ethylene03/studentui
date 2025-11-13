@@ -61,7 +61,11 @@ export default {
 </script>
 
 <template>
-  <form id="students--form" class="container my-5" @submit.prevent="submitStudent">
+  <form
+    id="students--form"
+    class="container bg-white p-5 rounded-3 my-5"
+    @submit.prevent="submitStudent"
+  >
     <div class="row g-4 mb-3">
       <div class="col-md-2">
         <label for="studentId" class="form-label">
@@ -163,7 +167,14 @@ export default {
           </option>
         </select>
         <div id="courseHelp" class="form-text">
-          Create a new <a href="/courses/add">course</a> if course does not exist.
+          Create a new
+          <a
+            @click="$router.push('/courses/add')"
+            class="text-primary text-underline"
+            style="cursor: pointer"
+            >course</a
+          >
+          if course does not exist.
         </div>
       </div>
     </div>

@@ -16,6 +16,7 @@ export default {
       student: null as Student | null,
       id: '',
       errorMessage: '',
+      isLoading: false,
     }
   },
   mounted() {
@@ -23,18 +24,23 @@ export default {
   },
   methods: {
     async fetchStudent() {
+      this.isLoading = true
+
       const id = this.$route.params.id as string
       const response = await getStudent(id)
       if ('message' in response) {
         if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
         else this.errorMessage = response.message as string
 
+        this.isLoading = false
         return
       }
 
       this.student = response
       this.id = id
+      this.isLoading = false
     },
+
     async editStudent(student: Student) {
       const response = await updateStudent(this.id, student)
       if ('message' in response) {
@@ -59,6 +65,21 @@ export default {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <StudentForm v-if="student" :student="student" @formData="editStudent" />
+    <div v-if="isLoading || !student" class="container bg-white rounded-3 my-5">
+      <div
+        v-if="isLoading"
+        class="spinner-border text-primary d-block mx-auto my-5"
+        role="status"
+      ></div>
+      <div v-else-if="!isLoading && !student" class="text-center my-5">
+        <img
+          src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg?semt=ais_incoming&w=740&q=80"
+          alt="no data available"
+          class="d-block mx-auto my-5 w-25"
+        />
+        <p class="text-center my-5">Student not found.</p>
+      </div>
+    </div>
+    <StudentForm v-else :student="student" @formData="editStudent" />
   </section>
 </template>

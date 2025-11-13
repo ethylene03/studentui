@@ -27,6 +27,7 @@ export default {
       query: null as string | null,
       students: [] as Student[],
       toDeleteId: '',
+      isLoading: false,
       debouncedFetch: null as ((query: string) => void) | null,
     }
   },
@@ -38,6 +39,8 @@ export default {
   },
   methods: {
     async fetchStudents(reset: boolean = false) {
+      this.isLoading = true
+
       let page = 0
       if (this.$route.query.page && !reset) page = Number(this.$route.query.page) - 1
       else this.$router.replace({ query: { page: '1' } })
@@ -51,14 +54,17 @@ export default {
         sort,
         ...(this.query ? { query: this.query } : {}),
       })
+
       if ('message' in response) {
         console.error('Error fetching students:', response.message)
+        this.isLoading = false
         return
       }
 
       this.totalCount = this.query ? this.totalCount : response.total
       this.pages = response.pages
       this.students = response.data
+      this.isLoading = false
     },
 
     handleClickDelete(id: string) {
@@ -109,7 +115,7 @@ export default {
 </script>
 
 <template>
-  <section id="students" class="w-100 d-flex flex-column vh-100">
+  <section id="students" class="w-100">
     <Navbar />
 
     <div class="container mt-5 text-center text-md-start">
@@ -124,7 +130,7 @@ export default {
       />
     </div>
 
-    <Table :data="students" :pages="pages" @deleteItem="handleClickDelete" />
+    <Table :data="students" :pages="pages" @deleteItem="handleClickDelete" :isLoading="isLoading" />
 
     <SuccessToast message="Student deleted successfully!" />
     <DeleteModal @delete="deleteItem" />

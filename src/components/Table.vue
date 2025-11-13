@@ -17,6 +17,10 @@ export default {
       default: 5,
       required: true,
     },
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     camelToTitle,
@@ -39,7 +43,8 @@ export default {
     class="container my-3 table-responsive d-flex flex-column justify-content-between rounded-3 bg-white"
     style="min-height: 400px"
   >
-    <div id="table--empty" v-if="data.length === 0">
+    <div v-if="isLoading" class="spinner-border text-primary d-block m-auto" role="status"></div>
+    <div id="table--empty" v-else-if="!isLoading && data.length === 0">
       <img
         src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg?semt=ais_incoming&w=740&q=80"
         alt="no data available"
@@ -69,12 +74,12 @@ export default {
             <td class="text-center px-4">
               <div class="d-flex justify-content-center">
                 <button
-                  class="btn btn-sm btn-outline-primary me-3"
+                  class="btn btn-sm btn-outline-primary me-3 px-4"
                   @click="handleAction(item, 'edit')"
                 >
                   Edit
                 </button>
-                <button class="btn btn-sm btn-outline-danger" @click="handleAction(item, 'delete')">
+                <button class="btn btn-sm btn-outline-danger px-3" @click="handleAction(item, 'delete')">
                   Delete
                 </button>
               </div>
@@ -83,6 +88,6 @@ export default {
         </tbody>
       </table>
     </div>
-    <Pagination :pages="pages" />
+    <Pagination v-if="!isLoading" :pages="pages" />
   </section>
 </template>

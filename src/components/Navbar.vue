@@ -22,7 +22,7 @@ export default {
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light p-3">
+  <nav class="navbar navbar-expand-lg sticky-top bg-light p-3 py-4">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Student Management System</a>
       <button
@@ -30,9 +30,6 @@ export default {
         type="button"
         data-bs-toggle="collapse"
         data-bs-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
       >
         <span class="navbar-toggler-icon"></span>
       </button>

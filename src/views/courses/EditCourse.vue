@@ -16,6 +16,7 @@ export default {
       course: null as Course | null,
       id: '',
       errorMessage: '',
+      isLoading: false,
     }
   },
   mounted() {
@@ -23,6 +24,8 @@ export default {
   },
   methods: {
     async fetchCourseData() {
+      this.isLoading = true
+
       const id = this.$route.params.id as string
       const response = await getCourse(id)
 
@@ -30,11 +33,13 @@ export default {
         if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
         else this.errorMessage = response.message as string
 
+        this.isLoading = false
         return
       }
 
       this.course = response
       this.id = id
+      this.isLoading = false
     },
     async editCourse(course: Course) {
       const response = await updateCourse(this.id, course)
@@ -61,6 +66,21 @@ export default {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <CourseForm v-if="course" :course="course" @formData="editCourse" />
+    <div v-if="isLoading || !course" class="container bg-white rounded-3 my-5">
+      <div
+        v-if="isLoading"
+        class="spinner-border text-primary d-block mx-auto my-5"
+        role="status"
+      ></div>
+      <div v-else-if="!isLoading && !course" class="text-center my-5">
+        <img
+          src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg?semt=ais_incoming&w=740&q=80"
+          alt="no data available"
+          class="d-block mx-auto my-5 w-25"
+        />
+        <p class="text-center my-5">Course not found.</p>
+      </div>
+    </div>
+    <CourseForm v-else :course="course" @formData="editCourse" />
   </section>
 </template>

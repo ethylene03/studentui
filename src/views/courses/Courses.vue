@@ -27,6 +27,7 @@ export default {
       query: null as string | null,
       courses: [] as Course[],
       toDeleteId: '',
+      isLoading: false,
       debouncedFetch: null as ((query: string) => void) | null,
     }
   },
@@ -38,6 +39,8 @@ export default {
   },
   methods: {
     async fetchCourses(reset: boolean = false) {
+      this.isLoading = true
+
       let page = 0
       if (this.$route.query.page && !reset) page = Number(this.$route.query.page) - 1
       else this.$router.replace({ query: { page: '1' } })
@@ -53,12 +56,14 @@ export default {
       })
       if ('message' in response) {
         console.error('Error fetching courses:', response.message)
+        this.isLoading = false
         return
       }
 
       this.totalCount = this.query ? this.totalCount : response.total
       this.pages = response.pages
       this.courses = response.data
+      this.isLoading = false
     },
 
     handleClickDelete(id: string) {
@@ -123,7 +128,7 @@ export default {
       />
     </div>
 
-    <Table :data="courses" :pages="pages" @deleteItem="handleClickDelete" />
+    <Table :data="courses" :pages="pages" @deleteItem="handleClickDelete" :isLoading="isLoading" />
 
     <SuccessToast message="Course deleted successfully!" />
     <DeleteModal @delete="deleteItem" />

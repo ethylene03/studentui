@@ -33,7 +33,7 @@ export default {
 </script>
 
 <template>
-  <form id="courses--form" class="container mt-5" @submit.prevent="submitCourse">
+  <form id="courses--form" class="container bg-white rounded-3 p-5 mt-5" @submit.prevent="submitCourse">
     <div class="flex-fill">
       <label for="name" class="form-label">
         Course Name
