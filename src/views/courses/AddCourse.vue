@@ -1,5 +1,5 @@
 <script lang="ts">
-import { addCourse } from '@/api/courses'
+import { addCourse } from '@/helpers/api/courses'
 import CourseForm from '@/components/CourseForm.vue'
 import Navbar from '@/components/Navbar.vue'
 import { getMessage } from '@/helpers/utils'

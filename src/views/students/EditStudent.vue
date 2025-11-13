@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getStudent, updateStudent } from '@/api/students'
+import { getStudent, updateStudent } from '@/helpers/api/students'
 import Navbar from '@/components/Navbar.vue'
 import NoData from '@/components/NoData.vue'
 import Spinner from '@/components/Spinner.vue'

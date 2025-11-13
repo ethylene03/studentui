@@ -7,7 +7,7 @@ import AddStudent from '@/views/students/AddStudent.vue'
 import EditStudent from '@/views/students/EditStudent.vue'
 import AddCourse from '@/views/courses/AddCourse.vue'
 import EditCourse from '@/views/courses/EditCourse.vue'
-import { useAuthorizationStore } from '@/stores/authorization'
+import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import Signup from '@/views/authorization/Signup.vue'
 
 const router = createRouter({

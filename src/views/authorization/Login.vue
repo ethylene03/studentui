@@ -1,9 +1,9 @@
 <script lang="ts">
-import { login } from '@/api/authorization'
+import { login } from '@/helpers/api/authorization'
 import CredentialsForm from '@/components/CredentialsForm.vue'
 import { getMessage } from '@/helpers/utils'
 import type { UserCredentials } from '@/models/users'
-import { useAuthorizationStore } from '@/stores/authorization'
+import { useAuthorizationStore } from '@/helpers/stores/authorization'
 
 export default {
   name: 'Login',

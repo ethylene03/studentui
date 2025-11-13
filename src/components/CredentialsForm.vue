@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { UserCredentials } from '@/models/users';
-import { validatePassword, validateUsername } from '@/validation/users';
-import type { PropType } from 'vue';
+import type { UserCredentials } from '@/models/users'
+import { validatePassword, validateUsername } from '@/helpers/validation/users'
+import type { PropType } from 'vue'
 
 export default {
   name: 'CredentialsForm',

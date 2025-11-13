@@ -1,9 +1,9 @@
 <script lang="ts">
-import { getCourses } from '@/api/courses'
+import { getCourses } from '@/helpers/api/courses'
 import type { Course } from '@/models/courses'
 import type { ValidationError } from '@/models/global'
 import type { Student } from '@/models/students'
-import { validateAll } from '@/validation/students'
+import { validateAll } from '@/helpers/validation/students'
 import type { PropType } from 'vue'
 
 export default {

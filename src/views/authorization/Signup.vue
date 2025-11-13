@@ -1,5 +1,5 @@
 <script lang="ts">
-import { signup } from '@/api/authorization'
+import { signup } from '@/helpers/api/authorization'
 import CredentialsForm from '@/components/CredentialsForm.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import { getMessage } from '@/helpers/utils'

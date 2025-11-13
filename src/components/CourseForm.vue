@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Course } from '@/models/courses'
-import { validateCourseName } from '@/validation/courses'
+import { validateCourseName } from '@/helpers/validation/courses'
 import type { PropType } from 'vue'
 
 export default {
@@ -33,7 +33,11 @@ export default {
 </script>
 
 <template>
-  <form id="courses--form" class="container bg-white rounded-3 p-5 mt-5" @submit.prevent="submitCourse">
+  <form
+    id="courses--form"
+    class="container bg-white rounded-3 p-5 mt-5"
+    @submit.prevent="submitCourse"
+  >
     <div class="flex-fill">
       <label for="name" class="form-label">
         Course Name

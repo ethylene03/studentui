@@ -1,4 +1,4 @@
-import { useAuthorizationStore } from '@/stores/authorization'
+import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import axios from 'axios'
 import { refreshToken } from './authorization'
 

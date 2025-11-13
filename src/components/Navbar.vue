@@ -1,6 +1,6 @@
 <script lang="ts">
-import { logout } from '@/api/authorization'
-import { useAuthorizationStore } from '@/stores/authorization'
+import { logout } from '@/helpers/api/authorization'
+import { useAuthorizationStore } from '@/helpers/stores/authorization'
 
 export default {
   name: 'Navbar',

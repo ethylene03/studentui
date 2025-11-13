@@ -1,5 +1,5 @@
 <script lang="ts">
-import { deleteCourse, getCourses } from '@/api/courses'
+import { deleteCourse, getCourses } from '@/helpers/api/courses'
 import ActionBar from '@/components/ActionBar.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
 import Navbar from '@/components/Navbar.vue'
