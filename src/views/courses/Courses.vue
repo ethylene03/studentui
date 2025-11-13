@@ -1,11 +1,12 @@
 <script lang="ts">
 import { deleteCourse, getCourses } from '@/api/courses'
 import ActionBar from '@/components/ActionBar.vue'
+import DeleteModal from '@/components/DeleteModal.vue'
 import Navbar from '@/components/Navbar.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import Table from '@/components/Table.vue'
 import type { Course } from '@/models/courses'
-import { Toast } from 'bootstrap'
+import { Modal, Toast } from 'bootstrap'
 import { debounce } from 'lodash'
 
 export default {
@@ -15,6 +16,7 @@ export default {
     Table,
     ActionBar,
     SuccessToast,
+    DeleteModal,
   },
   data() {
     return {
@@ -24,6 +26,7 @@ export default {
       sortBy: 'asc',
       query: null as string | null,
       courses: [] as Course[],
+      toDeleteId: '',
       debouncedFetch: null as ((query: string) => void) | null,
     }
   },
@@ -58,14 +61,28 @@ export default {
       this.courses = response.data
     },
 
-    async deleteItem(id: string) {
-      if (!id) return
-      const toast = document.getElementById('toast--success')
+    handleClickDelete(id: string) {
+      this.toDeleteId = id
+      const modal = document.getElementById('modal--delete')
+      if (modal) {
+        const modalInstance = new Modal(modal as HTMLElement)
+        modalInstance.show()
+      }
+    },
 
-      const response = await deleteCourse(id)
+    async deleteItem() {
+      if (!this.toDeleteId) return
+      const toast = document.getElementById('toast--success')
+      const modal = document.getElementById('modal--delete')
+
+      const response = await deleteCourse(this.toDeleteId)
       if (!response) {
+        const modalInstance = Modal.getInstance(modal as HTMLElement)
+        modalInstance?.hide()
+
         const toastInstance = new Toast(toast as HTMLElement)
         toastInstance.show()
+
         this.fetchCourses(true)
       }
     },
@@ -106,8 +123,9 @@ export default {
       />
     </div>
 
-    <Table :data="courses" :pages="pages" @deleteItem="deleteItem" />
+    <Table :data="courses" :pages="pages" @deleteItem="handleClickDelete" />
 
     <SuccessToast message="Course deleted successfully!" />
+    <DeleteModal @delete="deleteItem" />
   </section>
 </template>

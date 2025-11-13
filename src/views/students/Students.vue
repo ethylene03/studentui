@@ -1,11 +1,12 @@
 <script lang="ts">
 import { deleteStudent, getStudents } from '@/api/students'
 import ActionBar from '@/components/ActionBar.vue'
+import DeleteModal from '@/components/DeleteModal.vue'
 import Navbar from '@/components/Navbar.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import Table from '@/components/Table.vue'
 import type { Student } from '@/models/students'
-import { Toast } from 'bootstrap'
+import { Modal, Toast } from 'bootstrap'
 import { debounce } from 'lodash'
 
 export default {
@@ -15,6 +16,7 @@ export default {
     Table,
     ActionBar,
     SuccessToast,
+    DeleteModal,
   },
   data() {
     return {
@@ -24,6 +26,7 @@ export default {
       sortBy: 'asc',
       query: null as string | null,
       students: [] as Student[],
+      toDeleteId: '',
       debouncedFetch: null as ((query: string) => void) | null,
     }
   },
@@ -58,14 +61,29 @@ export default {
       this.students = response.data
     },
 
-    async deleteItem(id: string) {
-      if (!id) return
-      const toast = document.getElementById('toast--success')
+    handleClickDelete(id: string) {
+      this.toDeleteId = id
 
-      const response = await deleteStudent(id)
+      const modal = document.getElementById('modal--delete')
+      if (modal) {
+        const modalInstance = new Modal(modal as HTMLElement)
+        modalInstance.show()
+      }
+    },
+
+    async deleteItem() {
+      if (!this.toDeleteId) return
+      const toast = document.getElementById('toast--success')
+      const modal = document.getElementById('modal--delete')
+
+      const response = await deleteStudent(this.toDeleteId)
       if (!response) {
+        const modalInstance = Modal.getInstance(modal as HTMLElement)
+        modalInstance?.hide()
+
         const toastInstance = new Toast(toast as HTMLElement)
         toastInstance.show()
+
         this.fetchStudents()
       }
     },
@@ -106,8 +124,9 @@ export default {
       />
     </div>
 
-    <Table :data="students" :pages="pages" @deleteItem="deleteItem" />
+    <Table :data="students" :pages="pages" @deleteItem="handleClickDelete" />
 
     <SuccessToast message="Student deleted successfully!" />
+    <DeleteModal @delete="deleteItem" />
   </section>
 </template>
