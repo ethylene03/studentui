@@ -2,6 +2,8 @@
 import { getCourse, updateCourse } from '@/api/courses'
 import CourseForm from '@/components/CourseForm.vue'
 import Navbar from '@/components/Navbar.vue'
+import NoData from '@/components/NoData.vue'
+import Spinner from '@/components/Spinner.vue'
 import { getMessage } from '@/helpers/utils'
 import type { Course } from '@/models/courses'
 
@@ -10,6 +12,8 @@ export default {
   components: {
     Navbar,
     CourseForm,
+    Spinner,
+    NoData,
   },
   data() {
     return {
@@ -67,19 +71,8 @@ export default {
     </div>
 
     <div v-if="isLoading || !course" class="container bg-white rounded-3 my-5">
-      <div
-        v-if="isLoading"
-        class="spinner-border text-primary d-block mx-auto my-5"
-        role="status"
-      ></div>
-      <div v-else-if="!isLoading && !course" class="text-center my-5">
-        <img
-          src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg?semt=ais_incoming&w=740&q=80"
-          alt="no data available"
-          class="d-block mx-auto my-5 w-25"
-        />
-        <p class="text-center my-5">Course not found.</p>
-      </div>
+      <Spinner v-if="isLoading" />
+      <NoData v-else-if="!isLoading && !course" message="Course not found." />
     </div>
     <CourseForm v-else :course="course" @formData="editCourse" />
   </section>

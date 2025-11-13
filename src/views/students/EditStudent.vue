@@ -1,6 +1,8 @@
 <script lang="ts">
 import { getStudent, updateStudent } from '@/api/students'
 import Navbar from '@/components/Navbar.vue'
+import NoData from '@/components/NoData.vue'
+import Spinner from '@/components/Spinner.vue'
 import StudentForm from '@/components/StudentForm.vue'
 import { getMessage } from '@/helpers/utils'
 import type { Student } from '@/models/students'
@@ -10,6 +12,8 @@ export default {
   components: {
     Navbar,
     StudentForm,
+    Spinner,
+    NoData,
   },
   data() {
     return {
@@ -66,19 +70,8 @@ export default {
     </div>
 
     <div v-if="isLoading || !student" class="container bg-white rounded-3 my-5">
-      <div
-        v-if="isLoading"
-        class="spinner-border text-primary d-block mx-auto my-5"
-        role="status"
-      ></div>
-      <div v-else-if="!isLoading && !student" class="text-center my-5">
-        <img
-          src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg?semt=ais_incoming&w=740&q=80"
-          alt="no data available"
-          class="d-block mx-auto my-5 w-25"
-        />
-        <p class="text-center my-5">Student not found.</p>
-      </div>
+      <Spinner v-if="isLoading" />
+      <NoData v-else-if="!isLoading && !student" message="Student not found." />
     </div>
     <StudentForm v-else :student="student" @formData="editStudent" />
   </section>

@@ -1,6 +1,8 @@
 <script lang="ts">
 import { camelToTitle, getPath } from '@/helpers/utils'
 import Pagination from './Pagination.vue'
+import NoData from './NoData.vue';
+import Spinner from './Spinner.vue';
 
 export default {
   name: 'TableComponent',
@@ -43,15 +45,8 @@ export default {
     class="container my-3 table-responsive d-flex flex-column justify-content-between rounded-3 bg-white"
     style="min-height: 400px"
   >
-    <div v-if="isLoading" class="spinner-border text-primary d-block m-auto" role="status"></div>
-    <div id="table--empty" v-else-if="!isLoading && data.length === 0">
-      <img
-        src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg?semt=ais_incoming&w=740&q=80"
-        alt="no data available"
-        class="d-block mx-auto my-5 w-25"
-      />
-      <p class="text-center my-5">No data available.</p>
-    </div>
+    <Spinner v-if="isLoading" />
+    <NoData v-else-if="!isLoading && data.length === 0" />
     <div v-else style="overflow-y: auto">
       <table class="table table-striped table-hover table-borderless">
         <thead>

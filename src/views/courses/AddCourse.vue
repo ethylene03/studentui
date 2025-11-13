@@ -46,6 +46,6 @@ export default {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <CourseForm @formData="addCourse" :errors="nameError" />
+    <CourseForm @formData="addCourse" />
   </section>
 </template>
