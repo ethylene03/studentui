@@ -168,14 +168,10 @@ export default {
       </div>
     </div>
     <div class="d-flex flex-wrap mt-5 gap-4">
-      <button
-        type="button"
-        class="btn btn-outline-primary bg-white flex-fill"
-        @click="$router.back()"
-      >
+      <button type="button" class="btn btn-outline-primary flex-fill" @click="$router.back()">
         Cancel
       </button>
-      <button type="submit" class="btn btn-primary flex-fill">Add Student</button>
+      <button type="submit" class="btn btn-primary flex-fill">Save</button>
     </div>
   </form>
 </template>
