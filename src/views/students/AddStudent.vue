@@ -28,7 +28,6 @@ export default {
         return
       }
 
-      console.log('Student added:', response)
       this.$router.back()
     },
   },

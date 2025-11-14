@@ -26,6 +26,7 @@ export default {
       studentCopy: { ...this.student },
       courses: [] as Course[],
       errors: [] as ValidationError[],
+      controller: null as AbortController | null,
     }
   },
   mounted() {
@@ -33,11 +34,11 @@ export default {
   },
   methods: {
     async fetchCourses() {
-      const response = await getCourses({ page: 0, size: 100 })
-      if ('message' in response) {
-        console.error('Error fetching courses:', response.message)
-        return
-      }
+      if (this.controller) this.controller.abort()
+      this.controller = new AbortController()
+
+      const response = await getCourses({ page: 0, size: 100 }, this.controller.signal)
+      if (!response || 'message' in response) return
 
       this.courses = response.data
     },
@@ -46,7 +47,6 @@ export default {
       if (!this.studentCopy) return
 
       this.errors = validateAll(this.studentCopy)
-      console.log(this.errors)
       if (this.errors.filter((e) => e.errors.length > 0).length > 0) return
 
       this.$emit('formData', this.studentCopy)

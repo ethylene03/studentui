@@ -28,7 +28,6 @@ api.interceptors.response.use(
       request._retry = true
       try {
         const auth = useAuthorizationStore()
-        console.log('Refreshing token...')
 
         const response = await refreshToken()
         auth.setToken(response.token)
@@ -37,7 +36,6 @@ api.interceptors.response.use(
         api.defaults.headers.common['Authorization'] = `Bearer ${response.token}`
         return api(request)
       } catch (error) {
-        console.error('Token refresh failed:', error)
         return Promise.reject(error)
       }
     }

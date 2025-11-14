@@ -29,7 +29,6 @@ export default {
         return
       }
 
-      console.log('Course added:', response)
       this.$router.back()
     },
   },

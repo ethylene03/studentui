@@ -61,7 +61,6 @@ export default {
       if(!response) return;
 
       if ('message' in response) {
-        console.error('Error fetching students:', response.message)
         this.isLoading = false
         return
       }

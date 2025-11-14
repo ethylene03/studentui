@@ -59,9 +59,8 @@ export default {
       }, this.controller.signal )
 
       if(!response) return;
-      
+
       if ('message' in response) {
-        console.error('Error fetching courses:', response.message)
         this.isLoading = false
         return
       }
