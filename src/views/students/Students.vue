@@ -29,6 +29,7 @@ export default {
       toDeleteId: '',
       isLoading: false,
       debouncedFetch: null as ((query: string) => void) | null,
+      controller: null as AbortController | null,
     }
   },
   mounted() {
@@ -40,6 +41,8 @@ export default {
   methods: {
     async fetchStudents(reset: boolean = false) {
       this.isLoading = true
+      if(this.controller) this.controller.abort()
+      this.controller = new AbortController()
 
       let page = 0
       if (this.$route.query.page && !reset) page = Number(this.$route.query.page) - 1
@@ -53,7 +56,9 @@ export default {
         size,
         sort,
         ...(this.query ? { query: this.query } : {}),
-      })
+      }, this.controller.signal)
+
+      if(!response) return;
 
       if ('message' in response) {
         console.error('Error fetching students:', response.message)

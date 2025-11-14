@@ -1,13 +1,15 @@
 <script lang="ts">
 import { camelToTitle, getPath } from '@/helpers/utils'
 import Pagination from './Pagination.vue'
-import NoData from './NoData.vue';
-import Spinner from './Spinner.vue';
+import NoData from './NoData.vue'
+import Spinner from './Spinner.vue'
 
 export default {
   name: 'TableComponent',
   components: {
     Pagination,
+    NoData,
+    Spinner,
   },
   props: {
     data: {
@@ -74,7 +76,10 @@ export default {
                 >
                   Edit
                 </button>
-                <button class="btn btn-sm btn-outline-danger px-3" @click="handleAction(item, 'delete')">
+                <button
+                  class="btn btn-sm btn-outline-danger px-3"
+                  @click="handleAction(item, 'delete')"
+                >
                   Delete
                 </button>
               </div>

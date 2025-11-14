@@ -1,7 +1,7 @@
 import type { Student, StudentList } from '@/models/students'
 import api from './api'
 import type { ErrorResponse } from '@/models/global'
-import type { AxiosError } from 'axios'
+import { type AxiosError, CanceledError } from 'axios'
 
 async function addStudent(student: Student): Promise<Student | ErrorResponse> {
   try {
@@ -12,11 +12,15 @@ async function addStudent(student: Student): Promise<Student | ErrorResponse> {
   }
 }
 
-async function getStudents(query: Object): Promise<StudentList | ErrorResponse> {
+async function getStudents(
+  query: Object,
+  signal: AbortSignal,
+): Promise<StudentList | ErrorResponse | null> {
   try {
-    const response = await api.get('/students', { params: query })
+    const response = await api.get('/students', { params: query, signal })
     return response.data as StudentList
   } catch (error) {
+    if(error instanceof CanceledError) return null
     return (error as AxiosError).response?.data as ErrorResponse
   }
 }
