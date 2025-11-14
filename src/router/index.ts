@@ -28,7 +28,7 @@ const router = createRouter({
       component: EditStudent,
       meta: { requiresAuth: true },
     },
-    { path: '/courses/', name: 'Courses', component: Courses, meta: { requiresAuth: true } },
+    { path: '/courses', name: 'Courses', component: Courses, meta: { requiresAuth: true } },
     { path: '/courses/add', name: 'AddCourse', component: AddCourse, meta: { requiresAuth: true } },
     {
       path: '/courses/:id/edit',

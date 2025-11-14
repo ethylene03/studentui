@@ -30,6 +30,7 @@ export default {
       isLoading: false,
       debouncedFetch: null as ((query: string) => void) | null,
       controller: null as AbortController | null,
+      timeoutID: null as number | null,
     }
   },
   mounted() {
@@ -40,27 +41,31 @@ export default {
   },
   methods: {
     async fetchStudents(reset: boolean = false) {
-      this.isLoading = true
-      if(this.controller) this.controller.abort()
+      this.timeoutID = window.setTimeout(() => {
+        this.isLoading = true
+      }, 300)
+
+      if (this.controller) this.controller.abort()
       this.controller = new AbortController()
 
       let page = 0
       if (this.$route.query.page && !reset) page = Number(this.$route.query.page) - 1
-      else this.$router.replace({ query: { page: '1' } })
 
       const sort = this.sortWith === '' ? 'id,asc' : `${this.sortWith},${this.sortBy}`
       const size = 7
 
-      const response = await getStudents({
-        page,
-        size,
-        sort,
-        ...(this.query ? { query: this.query } : {}),
-      }, this.controller.signal)
+      const response = await getStudents(
+        {
+          page,
+          size,
+          sort,
+          ...(this.query ? { query: this.query } : {}),
+        },
+        this.controller.signal,
+      )
 
-      if(!response) return;
-
-      if ('message' in response) {
+      if (!response || 'message' in response) {
+        clearTimeout(this.timeoutID!)
         this.isLoading = false
         return
       }
@@ -68,6 +73,8 @@ export default {
       this.totalCount = this.query ? this.totalCount : response.total
       this.pages = response.pages
       this.students = response.data
+
+      clearTimeout(this.timeoutID!)
       this.isLoading = false
     },
 

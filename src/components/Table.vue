@@ -26,6 +26,16 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      dataLoaded: false,
+    }
+  },
+  mounted() {
+    window.setTimeout(() => {
+      this.dataLoaded = true
+    }, 300)
+  },
   methods: {
     camelToTitle,
     handleAction(item: any, action: string) {
@@ -48,7 +58,7 @@ export default {
     style="min-height: 400px"
   >
     <Spinner v-if="isLoading" />
-    <NoData v-else-if="!isLoading && data.length === 0" />
+    <NoData v-else-if="!isLoading && dataLoaded && data.length === 0" />
     <div v-else style="overflow-y: auto">
       <table class="table table-striped table-hover table-borderless">
         <thead>

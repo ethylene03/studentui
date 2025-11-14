@@ -17,7 +17,7 @@ async function getStudents(
   signal: AbortSignal,
 ): Promise<StudentList | ErrorResponse | null> {
   try {
-    const response = await api.get('/students', { params: query, signal })
+    const response = await api.get('/students', { params: query })
     return response.data as StudentList
   } catch (error) {
     if(error instanceof CanceledError) return null
