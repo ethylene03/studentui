@@ -6,6 +6,8 @@ import { getMessage } from '@/helpers/utils'
 import type { Course } from '@/models/courses'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import SuccessToast from '@/components/SuccessToast.vue'
+import { Toast } from 'bootstrap'
 
 /*<--------- ADD COURSE --------->*/
 
@@ -15,6 +17,7 @@ const router = useRouter()
 
 async function createCourse(course: Course) {
   isLoading.value = true
+  const toast = document.getElementById('toast--success')
   const response = await addCourse(course)
 
   if ('message' in response) {
@@ -23,6 +26,9 @@ async function createCourse(course: Course) {
 
     return
   }
+
+  const toastInstance = new Toast(toast as HTMLElement)
+  toastInstance.show()
 
   setTimeout(() => {
     isLoading.value = false
@@ -42,5 +48,6 @@ async function createCourse(course: Course) {
     </div>
 
     <CourseForm @formData="createCourse" :isLoading="isLoading" />
+    <SuccessToast message="Course added successfully!" />
   </section>
 </template>

@@ -8,6 +8,8 @@ import { getMessage } from '@/helpers/utils'
 import type { Student } from '@/models/students'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Toast } from 'bootstrap'
+import SuccessToast from '@/components/SuccessToast.vue'
 
 onMounted(() => {
   fetchStudent()
@@ -46,6 +48,7 @@ async function fetchStudent() {
 const editLoading = ref<boolean>(false)
 async function editStudent(student: Student) {
   editLoading.value = true
+  const toast = document.getElementById('toast--success')
   const response = await updateStudent(id.value, student)
   if ('message' in response) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
@@ -53,6 +56,9 @@ async function editStudent(student: Student) {
 
     return
   }
+
+  const toastInstance = new Toast(toast as HTMLElement)
+  toastInstance.show()
 
   setTimeout(() => {
     editLoading.value = false
@@ -76,5 +82,6 @@ async function editStudent(student: Student) {
       <NoData v-else-if="!isLoading && !student" message="Student not found." />
     </div>
     <StudentForm v-else :student="student" @formData="editStudent" :isLoading="editLoading" />
+    <SuccessToast message="Student updated successfully!" />
   </section>
 </template>
