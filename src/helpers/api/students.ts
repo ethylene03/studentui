@@ -1,14 +1,20 @@
 import type { Student, StudentList } from '@/models/students'
-import api from './api'
+import { DELETE, GET, POST, PUT, api } from './base'
+import { CanceledError, type AxiosError } from 'axios'
 import type { ErrorResponse } from '@/models/global'
-import { type AxiosError, CanceledError } from 'axios'
 
 async function addStudent(student: Student): Promise<Student | ErrorResponse> {
   try {
-    const response = await api.post('/students', student)
-    return response.data as Student
+    const response = await fetch(POST('/students', student))
+
+    if (!response.ok) return (await response.json()) as ErrorResponse
+
+    return (await response.json()) as Student
   } catch (error) {
-    return (error as AxiosError).response?.data as ErrorResponse
+    if (error instanceof TypeError)
+      return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
+
+    return { message: ['Unknown error occurred'], error: 500, status: 'error' }
   }
 }
 
@@ -17,38 +23,61 @@ async function getStudents(
   signal: AbortSignal,
 ): Promise<StudentList | ErrorResponse | null> {
   try {
-    const response = await api.get('/students', { params: query })
-    return response.data as StudentList
+    const response = await fetch(GET('/students', query, signal))
+
+    if (!response.ok) return (await response.json()) as ErrorResponse
+
+    return (await response.json()) as StudentList
   } catch (error) {
-    if(error instanceof CanceledError) return null
-    return (error as AxiosError).response?.data as ErrorResponse
+    if (error instanceof CanceledError) return null
+
+    if (error instanceof TypeError)
+      return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
+
+    return { message: ['Unknown error occurred'], error: 500, status: 'error' }
   }
 }
 
 async function getStudent(id: string): Promise<Student | ErrorResponse> {
   try {
-    const response = await api.get('/students/' + id)
-    return response.data as Student
+    const response = await fetch(GET('/students/' + id))
+
+    if (!response.ok) return (await response.json()) as ErrorResponse
+
+    return (await response.json()) as Student
   } catch (error) {
-    return (error as AxiosError).response?.data as ErrorResponse
+    if (error instanceof TypeError)
+      return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
+
+    return { message: ['Unknown error occurred'], error: 500, status: 'error' }
   }
 }
 
 async function updateStudent(id: string, student: Student): Promise<Student | ErrorResponse> {
   try {
-    const response = await api.put('/students/' + id, student)
-    return response.data as Student
+    const response = await fetch(PUT('/students/' + id, student))
+
+    if (!response.ok) return (await response.json()) as ErrorResponse
+
+    return (await response.json()) as Student
   } catch (error) {
-    return (error as AxiosError).response?.data as ErrorResponse
+    if (error instanceof TypeError)
+      return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
+
+    return { message: ['Unknown error occurred'], error: 500, status: 'error' }
   }
 }
 
-async function deleteStudent(id: string): Promise<null | ErrorResponse> {
+async function deleteStudent(id: string): Promise<void | ErrorResponse> {
   try {
-    await api.delete('/students/' + id)
-    return null
+    const response = await fetch(DELETE('/students/' + id))
+
+    if (!response.ok) return (await response.json()) as ErrorResponse
   } catch (error) {
-    return (error as AxiosError).response?.data as ErrorResponse
+    if (error instanceof TypeError)
+      return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
+
+    return { message: ['Unknown error occurred'], error: 500, status: 'error' }
   }
 }
 

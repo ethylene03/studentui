@@ -5,7 +5,7 @@ function getUrl(path: string = ''): string {
   return 'http://localhost:8080/auth' + path
 }
 
-const headers = { 'Content-Type': 'application/json' }
+const headers = new Headers({ 'Content-Type': 'application/json' })
 
 async function login(user: UserCredentials): Promise<UserToken | ErrorResponse> {
   try {
