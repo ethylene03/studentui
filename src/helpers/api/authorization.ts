@@ -1,34 +1,58 @@
 import type { ErrorResponse } from '@/models/global'
 import type { User, UserCredentials, UserToken } from '@/models/users'
-import axios, { AxiosError } from 'axios'
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 5000,
-  withCredentials: true,
-})
+function getUrl(path: string = ''): string {
+  return 'http://localhost:8080/auth' + path
+}
+
+const headers = { 'Content-Type': 'application/json' }
 
 async function login(user: UserCredentials): Promise<UserToken | ErrorResponse> {
   try {
-    const response = await api.post('/auth/login', user)
-    return response.data as UserToken
+    const response = await fetch(getUrl('/login'), {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(user),
+    })
+
+    if (!response.ok) return (await response.json()) as ErrorResponse
+
+    return (await response.json()) as UserToken
   } catch (error) {
-    return (error as AxiosError).response?.data as ErrorResponse
+    if (error instanceof TypeError)
+      return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
+
+    return { message: ['Unknown error occurred'], error: 500, status: 'error' }
   }
 }
 
 async function signup(user: UserCredentials): Promise<User | ErrorResponse> {
   try {
-    const response = await api.post('/auth/signup', user)
-    return response.data as User
+    const response = await fetch(getUrl('/signup'), {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(user),
+    })
+
+    if (!response.ok) return (await response.json()) as ErrorResponse
+
+    return (await response.json()) as User
   } catch (error) {
-    return (error as AxiosError).response?.data as ErrorResponse
+    if (error instanceof TypeError)
+      return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
+
+    return { message: ['Unknown error occurred'], error: 500, status: 'error' }
   }
 }
 
 async function logout(): Promise<void> {
   try {
-    await api.delete('/auth')
+    const response = await fetch(getUrl(), {
+      method: 'DELETE',
+      headers,
+    })
+
+    if (!response.ok) throw new Error('Logout failed with status ' + response.status)
   } catch (error) {
     throw new Error('Error logging out user: ' + error)
   }
@@ -36,8 +60,14 @@ async function logout(): Promise<void> {
 
 async function refreshToken(): Promise<UserToken> {
   try {
-    const response = await api.post('/auth/refresh')
-    return response.data
+    const response = await fetch(getUrl('/refresh'), {
+      method: 'POST',
+      headers,
+    })
+
+    if (!response.ok) throw new Error('Token refresh failed with status ' + response.status)
+
+    return (await response.json()) as UserToken
   } catch (error) {
     throw new Error('Error refreshing token: ' + error)
   }
