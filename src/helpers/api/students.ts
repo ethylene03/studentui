@@ -1,5 +1,5 @@
 import type { Student, StudentList } from '@/models/students'
-import { DELETE, GET, POST, PUT } from './base'
+import { DELETE, fetchApi, GET, POST, PUT } from './base'
 import type { ErrorResponse } from '@/models/global'
 
 async function addStudent(student: Student): Promise<Student | ErrorResponse> {
@@ -22,7 +22,7 @@ async function getStudents(
   signal: AbortSignal,
 ): Promise<StudentList | ErrorResponse | null> {
   try {
-    const response = await fetch(GET('/students', query, signal))
+    const response = await fetchApi(GET('/students', query, signal))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -39,7 +39,7 @@ async function getStudents(
 
 async function getStudent(id: string): Promise<Student | ErrorResponse> {
   try {
-    const response = await fetch(GET('/students/' + id))
+    const response = await fetchApi(GET('/students/' + id))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -54,7 +54,7 @@ async function getStudent(id: string): Promise<Student | ErrorResponse> {
 
 async function updateStudent(id: string, student: Student): Promise<Student | ErrorResponse> {
   try {
-    const response = await fetch(PUT('/students/' + id, student))
+    const response = await fetchApi(PUT('/students/' + id, student))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -69,7 +69,7 @@ async function updateStudent(id: string, student: Student): Promise<Student | Er
 
 async function deleteStudent(id: string): Promise<void | ErrorResponse> {
   try {
-    const response = await fetch(DELETE('/students/' + id))
+    const response = await fetchApi(DELETE('/students/' + id))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
   } catch (error) {

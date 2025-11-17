@@ -1,10 +1,10 @@
 import type { Course, CourseList } from '@/models/courses'
-import { DELETE, GET, POST, PUT } from './base'
+import { DELETE, fetchApi, GET, POST, PUT } from './base'
 import type { ErrorResponse } from '@/models/global'
 
 async function addCourse(course: Course): Promise<Course | ErrorResponse> {
   try {
-    const response = await fetch(POST('/courses', course))
+    const response = await fetchApi(POST('/courses', course))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -22,7 +22,7 @@ async function getCourses(
   signal: AbortSignal,
 ): Promise<CourseList | ErrorResponse | null> {
   try {
-    const response = await fetch(GET('/courses', query, signal))
+    const response = await fetchApi(GET('/courses', query, signal))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -39,7 +39,7 @@ async function getCourses(
 
 async function getCourse(id: string): Promise<Course | ErrorResponse> {
   try {
-    const response = await fetch(GET('/courses/' + id))
+    const response = await fetchApi(GET('/courses/' + id))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -54,7 +54,7 @@ async function getCourse(id: string): Promise<Course | ErrorResponse> {
 
 async function updateCourse(id: string, course: Course): Promise<Course | ErrorResponse> {
   try {
-    const response = await fetch(PUT('/courses/' + id, course))
+    const response = await fetchApi(PUT('/courses/' + id, course))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -69,7 +69,7 @@ async function updateCourse(id: string, course: Course): Promise<Course | ErrorR
 
 async function deleteCourse(id: string): Promise<void | ErrorResponse> {
   try {
-    const response = await fetch(DELETE('/courses/' + id))
+    const response = await fetchApi(DELETE('/courses/' + id))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
   } catch (error) {

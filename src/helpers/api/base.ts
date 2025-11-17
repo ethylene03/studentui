@@ -4,20 +4,18 @@ import { refreshToken } from './authorization'
 
 const baseUrl = 'http://localhost:8080'
 
-function getToken() {
-  const token = localStorage.getItem('token') || null
-  return `Bearer ${token}`
+function getHeaders() {
+  const token = localStorage.getItem('token') || ''
+  return new Headers({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  })
 }
-
-const headers = new Headers({
-  'Content-Type': 'application/json',
-  Authorization: getToken(),
-})
 
 function POST(url: string, data: Object) {
   return new Request(baseUrl + url, {
     method: 'POST',
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify(data),
   })
 }
@@ -26,7 +24,7 @@ function GET(url: string, query?: Object, signal?: AbortSignal) {
   const params = query ? new URLSearchParams(query as Record<string, string>).toString() : null
   return new Request(baseUrl + url + (params ? '?' + params : ''), {
     method: 'GET',
-    headers,
+    headers: getHeaders(),
     signal,
   })
 }
@@ -34,7 +32,7 @@ function GET(url: string, query?: Object, signal?: AbortSignal) {
 function PUT(url: string, data: Object) {
   return new Request(baseUrl + url, {
     method: 'PUT',
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify(data),
   })
 }
@@ -42,8 +40,24 @@ function PUT(url: string, data: Object) {
 function DELETE(url: string) {
   return new Request(baseUrl + url, {
     method: 'DELETE',
-    headers,
+    headers: getHeaders(),
   })
+}
+
+async function fetchApi(request: Request) {
+  const response = await fetch(request)
+
+  if (response.status === 403) {
+    const auth = useAuthorizationStore()
+    const newToken = await refreshToken()
+    auth.setToken(newToken.token)
+    auth.refreshTime()
+
+    request.headers.set('Authorization', `Bearer ${newToken.token}`)
+    return await fetch(request)
+  }
+
+  return response
 }
 
 const api = axios.create({
@@ -85,4 +99,4 @@ api.interceptors.response.use(
   },
 )
 
-export { api, POST, GET, PUT, DELETE }
+export { fetchApi, POST, GET, PUT, DELETE }

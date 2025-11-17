@@ -11,6 +11,7 @@ async function login(user: UserCredentials): Promise<UserToken | ErrorResponse> 
   try {
     const response = await fetch(getUrl('/login'), {
       method: 'POST',
+      credentials: 'include',
       headers,
       body: JSON.stringify(user),
     })
@@ -62,6 +63,7 @@ async function refreshToken(): Promise<UserToken> {
   try {
     const response = await fetch(getUrl('/refresh'), {
       method: 'POST',
+      credentials: 'include',
       headers,
     })
 
