@@ -67,7 +67,8 @@ async function refreshToken(): Promise<UserToken> {
       headers,
     })
 
-    if (!response.ok) throw new Error('Token refresh failed with status ' + response.status)
+    // make user login again
+    if (!response.ok) window.location.href = '/'
 
     return (await response.json()) as UserToken
   } catch (error) {
