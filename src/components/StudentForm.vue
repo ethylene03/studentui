@@ -10,7 +10,7 @@ onMounted(() => {
   fetchCourses()
 })
 
-const props = defineProps<{ student?: Student }>()
+const props = defineProps<{ student?: Student; isLoading: boolean }>()
 const student = reactive<Student>({
   id: undefined,
   studentId: '',
@@ -141,13 +141,7 @@ function getErrors(field: keyof Student): string[] {
           Age
           <span class="text-danger">*</span>
         </label>
-        <input
-          type="number"
-          class="form-control"
-          id="age"
-          placeholder="0"
-          v-model="student.age"
-        />
+        <input type="number" class="form-control" id="age" placeholder="0" v-model="student.age" />
         <div class="form-text text-danger mt-1" v-for="error in getErrors('age')" :key="error">
           {{ error }}
         </div>
@@ -179,7 +173,14 @@ function getErrors(field: keyof Student): string[] {
       <button type="button" class="btn btn-outline-primary flex-fill" @click="$router.back()">
         Cancel
       </button>
-      <button type="submit" class="btn btn-primary flex-fill">Save</button>
+      <button type="submit" class="btn btn-primary flex-fill" :disabled="isLoading">
+        <div
+          v-if="isLoading"
+          class="spinner-border spinner-border-sm text-primary d-block mx-auto my-1"
+          role="status"
+        ></div>
+        <span v-else> Save </span>
+      </button>
     </div>
   </form>
 </template>

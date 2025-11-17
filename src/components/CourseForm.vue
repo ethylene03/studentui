@@ -3,7 +3,7 @@ import { validateCourseName } from '@/helpers/validation/courses'
 import type { Course } from '@/models/courses'
 import { reactive } from 'vue'
 
-const props = defineProps<{ course?: Partial<Course> }>()
+const props = defineProps<{ course?: Partial<Course>; isLoading: boolean }>()
 const course = reactive<Course>({
   id: undefined,
   name: '',
@@ -52,7 +52,14 @@ function submitCourse() {
       <button type="button" class="btn btn-outline-primary flex-fill" @click="$router.back()">
         Cancel
       </button>
-      <button type="submit" class="btn btn-primary flex-fill">Save</button>
+      <button type="submit" class="btn btn-primary flex-fill" :disabled="isLoading">
+        <div
+          v-if="isLoading"
+          class="spinner-border spinner-border-sm text-primary d-block mx-auto my-1"
+          role="status"
+        ></div>
+        <span v-else>Save</span>
+      </button>
     </div>
   </form>
 </template>

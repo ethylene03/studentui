@@ -44,7 +44,9 @@ async function fetchCourseData() {
 
 /*<--------- EDIT COURSE --------->*/
 
+const editLoading = ref<boolean>(false)
 async function editCourse(course: Course) {
+  editLoading.value = true
   const response = await updateCourse(id.value, course)
 
   if ('message' in response) {
@@ -54,7 +56,10 @@ async function editCourse(course: Course) {
     return
   }
 
-  router.back()
+  setTimeout(() => {
+    editLoading.value = false
+    router.back()
+  }, 500)
 }
 </script>
 
@@ -72,6 +77,6 @@ async function editCourse(course: Course) {
       <Spinner v-if="isLoading" />
       <NoData v-else-if="!isLoading && !course" message="Course not found." />
     </div>
-    <CourseForm v-else :course="course" @formData="editCourse" />
+    <CourseForm v-else :course="course" @formData="editCourse" :isLoading="editLoading" />
   </section>
 </template>

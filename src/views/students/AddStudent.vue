@@ -10,9 +10,11 @@ import { useRouter } from 'vue-router'
 /*<--------- ADD STUDENT --------->*/
 
 const errorMessage = ref<string>('')
+const isLoading = ref<boolean>(false)
 const router = useRouter()
 
 async function createStudent(student: Student) {
+  isLoading.value = true
   const response = await addStudent(student)
 
   if ('message' in response) {
@@ -22,7 +24,10 @@ async function createStudent(student: Student) {
     return
   }
 
-  router.back()
+  setTimeout(() => {
+    isLoading.value = false
+    router.back()
+  }, 500)
 }
 </script>
 
@@ -36,6 +41,6 @@ async function createStudent(student: Student) {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <StudentForm @formData="createStudent" />
+    <StudentForm @formData="createStudent" :isLoading="isLoading" />
   </section>
 </template>
