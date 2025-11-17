@@ -11,9 +11,12 @@ import { useRouter } from 'vue-router'
 /*<--------- USER SIGNUP --------->*/
 
 const errorMessage = ref<string | undefined>(undefined)
+const isLoading = ref<boolean>(false)
 const router = useRouter()
 
 async function signupUser(credentials: UserCredentials) {
+  isLoading.value = true
+
   const toast = document.getElementById('toast--success')
   const response = await signup(credentials)
   if ('message' in response) {
@@ -26,8 +29,9 @@ async function signupUser(credentials: UserCredentials) {
   const toastInstance = new Toast(toast as HTMLElement)
   toastInstance.show()
   setTimeout(() => {
+    isLoading.value = false
     router.push('/')
-  }, 1000)
+  }, 500)
 }
 </script>
 
@@ -36,7 +40,12 @@ async function signupUser(credentials: UserCredentials) {
     <h3>Student Management System</h3>
     <h5 class="text-center">Signup</h5>
 
-    <CredentialsForm label="Signup" :submitError="errorMessage" @onUserSubmit="signupUser" />
+    <CredentialsForm
+      label="Signup"
+      :isLoading="isLoading"
+      :submitError="errorMessage"
+      @onUserSubmit="signupUser"
+    />
     <div class="mt-3 text-center"><a class="mt-3 text-center" href="/">Back to Login</a></div>
 
     <SuccessToast message="Signup successful!" />

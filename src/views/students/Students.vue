@@ -115,7 +115,7 @@ function onClickSort() {
 
 const toDeleteId = ref<string>('')
 
-function handleClickDelete(id: string) {
+function showDeleteModal(id: string) {
   toDeleteId.value = id
 
   const modal = document.getElementById('modal--delete')
@@ -159,7 +159,7 @@ async function deleteItem() {
       />
     </div>
 
-    <Table :data="students" :pages="pages" @deleteItem="handleClickDelete" :isLoading="isLoading" />
+    <Table :data="students" :pages="pages" @deleteItem="showDeleteModal" :isLoading="isLoading" />
 
     <SuccessToast message="Student deleted successfully!" />
     <DeleteModal @delete="deleteItem" />

@@ -3,7 +3,11 @@ import { validatePassword, validateUsername } from '@/helpers/validation/users'
 import type { UserCredentials } from '@/models/users'
 import { reactive } from 'vue'
 
-const { label, submitError } = defineProps<{ label: string; submitError?: string }>()
+const { label, submitError, isLoading } = defineProps<{
+  label: string
+  submitError?: string
+  isLoading: boolean
+}>()
 const emit = defineEmits<{ (event: 'onUserSubmit', value: UserCredentials): void }>()
 
 /*<--------- FORM SUBMIT --------->*/
@@ -69,6 +73,13 @@ function validateCredentials() {
     <div v-if="submitError" class="form-text text-danger mt-2">
       {{ submitError }}
     </div>
-    <button type="submit" class="btn btn-primary w-100 mt-3">{{ label }}</button>
+    <button type="submit" class="btn btn-primary w-100 mt-3" :disabled="isLoading">
+      <div
+        v-if="isLoading"
+        class="spinner-border spinner-border-sm text-primary d-block mx-auto my-1"
+        role="status"
+      ></div>
+      <span v-else>{{ label }}</span>
+    </button>
   </form>
 </template>

@@ -43,9 +43,13 @@ router.beforeEach((to, from, next) => {
   const auth = useAuthorizationStore()
   if (to.meta.requiresAuth && !auth.isLoggedIn()) {
     next({ name: 'Login' })
-  } else {
-    next()
   }
+
+  if (to.name === 'Login' && auth.isLoggedIn()) {
+    next({ name: 'Students' })
+  }
+
+  next()
 })
 
 export default router

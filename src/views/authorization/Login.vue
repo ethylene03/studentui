@@ -6,13 +6,19 @@ import type { UserCredentials } from '@/models/users'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import SuccessToast from '@/components/SuccessToast.vue'
+import { Toast } from 'bootstrap'
 
 /*<--------- USER LOGIN --------->*/
 
 const errorMessage = ref<string | undefined>(undefined)
+const isLoading = ref<boolean>(false)
 const router = useRouter()
 
 async function loginUser(credentials: UserCredentials) {
+  isLoading.value = true
+  const toast = document.getElementById('toast--success')
+
   const auth = useAuthorizationStore()
   const response = await login(credentials)
 
@@ -25,7 +31,14 @@ async function loginUser(credentials: UserCredentials) {
 
   auth.setToken(response.token)
   auth.refreshTime()
-  router.push('/students')
+
+  const toastInstance = new Toast(toast as HTMLElement)
+  toastInstance.show()
+
+  setTimeout(() => {
+    isLoading.value = false
+    window.location.reload()
+  }, 500)
 }
 </script>
 
@@ -33,11 +46,18 @@ async function loginUser(credentials: UserCredentials) {
   <section id="login" class="d-flex flex-column justify-content-center vh-100">
     <h3>Student Management System</h3>
     <h5 class="text-center">Login</h5>
-    <CredentialsForm label="Login" :submitError="errorMessage" @onUserSubmit="loginUser" />
+    <CredentialsForm
+      label="Login"
+      :isLoading="isLoading"
+      :submitError="errorMessage"
+      @onUserSubmit="loginUser"
+    />
 
     <div class="mt-3 text-center">
       Don't have an account?
       <a class="mt-3 text-center" href="/signup">Sign up</a>
     </div>
+
+    <SuccessToast message="Login successful!" />
   </section>
 </template>

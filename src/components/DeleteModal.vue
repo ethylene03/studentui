@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
+
+const isClicked = ref<boolean>(false)
+
+const emit = defineEmits<{ (event: 'delete'): void }>()
+
+watch(isClicked, () => {
+  if (isClicked.value) emit('delete')
+})
+
+onMounted(() => {
+  const modal = document.getElementById('modal--delete')
+  modal?.addEventListener('hidden.bs.modal', () => {
+    isClicked.value = false
+  })
+})
+</script>
+
 <template>
   <div class="modal fade" id="modal--delete" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -18,8 +37,18 @@
           <button type="button" class="btn btn-outline-primary px-5" data-bs-dismiss="modal">
             Cancel
           </button>
-          <button type="button" class="btn btn-primary px-5" @click="$emit('delete')">
-            Delete
+          <button
+            type="button"
+            class="btn btn-primary px-5"
+            @click="isClicked = true"
+            :disabled="isClicked"
+          >
+            <div
+              v-if="isClicked"
+              class="spinner-border spinner-border-sm text-primary d-block mx-auto my-1"
+              role="status"
+            ></div>
+            <span v-else>Delete</span>
           </button>
         </div>
       </div>
