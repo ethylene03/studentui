@@ -1,6 +1,5 @@
 import type { Course, CourseList } from '@/models/courses'
-import { DELETE, GET, POST, PUT, api } from './base'
-import { CanceledError, type AxiosError } from 'axios'
+import { DELETE, GET, POST, PUT } from './base'
 import type { ErrorResponse } from '@/models/global'
 
 async function addCourse(course: Course): Promise<Course | ErrorResponse> {
@@ -29,7 +28,7 @@ async function getCourses(
 
     return (await response.json()) as CourseList
   } catch (error) {
-    if (error instanceof CanceledError) return null
+    if (error instanceof DOMException) return null
 
     if (error instanceof TypeError)
       return { message: ['Network or fetch-related error'], error: 500, status: 'error' }
