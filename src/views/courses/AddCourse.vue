@@ -1,37 +1,28 @@
-<script lang="ts">
+<script setup lang="ts">
 import { addCourse } from '@/helpers/api/courses'
 import CourseForm from '@/components/CourseForm.vue'
 import Navbar from '@/components/Navbar.vue'
 import { getMessage } from '@/helpers/utils'
 import type { Course } from '@/models/courses'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-export default {
-  name: 'AddCourse',
-  components: {
-    Navbar,
-    CourseForm,
-  },
-  data() {
-    return {
-      errorMessage: '',
-      nameError: [] as string[],
-    }
-  },
-  methods: {
-    async addCourse(course: Course) {
-      const response = await addCourse(course)
+/*<--------- ADD COURSE --------->*/
 
-      // Handle error response
-      if ('message' in response) {
-        if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
-        else this.errorMessage = response.message as string
+const errorMessage = ref<string>('')
+const router = useRouter()
 
-        return
-      }
+async function createCourse(course: Course) {
+  const response = await addCourse(course)
 
-      this.$router.back()
-    },
-  },
+  if ('message' in response) {
+    if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
+    else errorMessage.value = response.message as string
+
+    return
+  }
+
+  router.back()
 }
 </script>
 
@@ -45,6 +36,6 @@ export default {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <CourseForm @formData="addCourse" />
+    <CourseForm @formData="createCourse" />
   </section>
 </template>

@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 import { getCourse, updateCourse } from '@/helpers/api/courses'
 import CourseForm from '@/components/CourseForm.vue'
 import Navbar from '@/components/Navbar.vue'
@@ -6,57 +6,55 @@ import NoData from '@/components/NoData.vue'
 import Spinner from '@/components/Spinner.vue'
 import { getMessage } from '@/helpers/utils'
 import type { Course } from '@/models/courses'
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-export default {
-  name: 'EditCourse',
-  components: {
-    Navbar,
-    CourseForm,
-    Spinner,
-    NoData,
-  },
-  data() {
-    return {
-      course: null as Course | null,
-      id: '',
-      errorMessage: '',
-      isLoading: false,
-    }
-  },
-  mounted() {
-    this.fetchCourseData()
-  },
-  methods: {
-    async fetchCourseData() {
-      this.isLoading = true
+onMounted(() => {
+  fetchCourseData()
+})
 
-      const id = this.$route.params.id as string
-      const response = await getCourse(id)
+const router = useRouter()
+const route = useRoute()
 
-      if ('message' in response) {
-        if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
-        else this.errorMessage = response.message as string
+/*<--------- FETCH EXISTING COURSE --------->*/
 
-        this.isLoading = false
-        return
-      }
+const course = ref<Course | null>(null)
+const id = ref<string>('')
+const errorMessage = ref<string>('')
+const isLoading = ref<boolean>(false)
 
-      this.course = response
-      this.id = id
-      this.isLoading = false
-    },
-    async editCourse(course: Course) {
-      const response = await updateCourse(this.id, course)
+async function fetchCourseData() {
+  isLoading.value = true
 
-      if ('message' in response) {
-        if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
-        else this.errorMessage = response.message as string
+  const routeID = route.params.id as string
+  const response = await getCourse(routeID)
 
-        return
-      }
-      this.$router.back()
-    },
-  },
+  if ('message' in response) {
+    if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
+    else errorMessage.value = response.message as string
+
+    isLoading.value = false
+    return
+  }
+
+  course.value = response
+  id.value = routeID
+  isLoading.value = false
+}
+
+/*<--------- EDIT COURSE --------->*/
+
+async function editCourse(course: Course) {
+  const response = await updateCourse(id.value, course)
+
+  if ('message' in response) {
+    if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
+    else errorMessage.value = response.message as string
+
+    return
+  }
+
+  router.back()
 }
 </script>
 

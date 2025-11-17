@@ -1,36 +1,28 @@
-<script lang="ts">
+<script setup lang="ts">
 import { addStudent } from '@/helpers/api/students'
 import Navbar from '@/components/Navbar.vue'
 import StudentForm from '@/components/StudentForm.vue'
 import { getMessage } from '@/helpers/utils'
 import type { Student } from '@/models/students'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-export default {
-  name: 'AddStudent',
-  components: {
-    Navbar,
-    StudentForm,
-  },
-  data() {
-    return {
-      errorMessage: '',
-    }
-  },
-  methods: {
-    async addStudent(student: Student) {
-      const response = await addStudent(student)
+/*<--------- ADD STUDENT --------->*/
 
-      // Handle error response
-      if ('message' in response) {
-        if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
-        else this.errorMessage = response.message as string
+const errorMessage = ref<string>('')
+const router = useRouter()
 
-        return
-      }
+async function createStudent(student: Student) {
+  const response = await addStudent(student)
 
-      this.$router.back()
-    },
-  },
+  if ('message' in response) {
+    if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
+    else errorMessage.value = response.message as string
+
+    return
+  }
+
+  router.back()
 }
 </script>
 
@@ -44,6 +36,6 @@ export default {
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <StudentForm @formData="addStudent" />
+    <StudentForm @formData="createStudent" />
   </section>
 </template>

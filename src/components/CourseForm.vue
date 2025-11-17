@@ -1,34 +1,27 @@
-<script lang="ts">
-import type { Course } from '@/models/courses'
+<script setup lang="ts">
 import { validateCourseName } from '@/helpers/validation/courses'
-import type { PropType } from 'vue'
+import type { Course } from '@/models/courses'
+import { reactive } from 'vue'
 
-export default {
-  name: 'CourseForm',
-  props: {
-    course: {
-      type: Object as PropType<Course>,
-      default: () => ({
-        name: '',
-      }),
-    },
-  },
-  data() {
-    return {
-      courseCopy: { ...this.course },
-      errors: [] as string[],
-    }
-  },
-  methods: {
-    submitCourse() {
-      if (!this.courseCopy) return
+const props = defineProps<{ course?: Partial<Course> }>()
+const course = reactive<Course>({
+  id: undefined,
+  name: '',
+  ...props.course,
+})
 
-      this.errors = validateCourseName(this.courseCopy.name).errors
-      if (this.errors.length > 0) return
+let errors = reactive<string[]>([])
+const emit = defineEmits<{
+  (event: 'formData', value: Course): void
+}>()
 
-      this.$emit('formData', this.courseCopy)
-    },
-  },
+function submitCourse() {
+  if (!course) return
+
+  errors = validateCourseName(course.name).errors
+  if (errors.length > 0) return
+
+  emit('formData', course)
 }
 </script>
 
@@ -48,7 +41,7 @@ export default {
         class="form-control"
         id="name"
         placeholder="Computer Science"
-        v-model="courseCopy.name"
+        v-model="course.name"
         required
       />
       <div class="form-text text-danger mt-1" v-for="error in errors" :key="error">

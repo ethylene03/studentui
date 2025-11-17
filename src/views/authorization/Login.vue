@@ -1,38 +1,31 @@
-<script lang="ts">
+<script setup lang="ts">
 import { login } from '@/helpers/api/authorization'
 import CredentialsForm from '@/components/CredentialsForm.vue'
 import { getMessage } from '@/helpers/utils'
 import type { UserCredentials } from '@/models/users'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-export default {
-  name: 'Login',
-  components: {
-    CredentialsForm,
-  },
-  data() {
-    return {
-      errorMessage: null as string | null,
-    }
-  },
-  methods: {
-    async loginUser(credentials: UserCredentials) {
-      // login user
-      const auth = useAuthorizationStore()
-      const response = await login(credentials)
+/*<--------- USER LOGIN --------->*/
 
-      if ('message' in response) {
-        if (typeof response.message !== 'string') this.errorMessage = getMessage(response.message)
-        else this.errorMessage = response.message
+const errorMessage = ref<string | undefined>(undefined)
+const router = useRouter()
 
-        return
-      }
+async function loginUser(credentials: UserCredentials) {
+  const auth = useAuthorizationStore()
+  const response = await login(credentials)
 
-      auth.setToken(response.token)
-      auth.refreshTime()
-      this.$router.push('/students')
-    },
-  },
+  if ('message' in response) {
+    if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
+    else errorMessage.value = response.message
+
+    return
+  }
+
+  auth.setToken(response.token)
+  auth.refreshTime()
+  router.push('/students')
 }
 </script>
 

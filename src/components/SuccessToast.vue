@@ -1,13 +1,5 @@
-<script lang="ts">
-export default {
-  name: 'SuccessToast',
-  props: {
-    message: {
-      type: String,
-      required: true,
-    },
-  },
-}
+<script setup lang="ts">
+const { message } = defineProps<{ message: string }>()
 </script>
 
 <template>

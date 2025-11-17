@@ -1,24 +1,19 @@
-<script lang="ts">
+<script setup lang="ts">
 import { logout } from '@/helpers/api/authorization'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
+import { computed } from 'vue'
 
-export default {
-  name: 'Navbar',
-  methods: {
-    async logoutUser() {
-      await logout()
+async function logoutUser() {
+  await logout()
 
-      const auth = useAuthorizationStore()
-      auth.clearToken()
-      window.location.reload()
-    },
-  },
-  computed: {
-    currentPath(): string {
-      return this.$route.path.split('/')[1] || 'home'
-    },
-  },
+  const auht = useAuthorizationStore()
+  auht.clearToken()
+  window.location.reload()
 }
+
+const currentPath = computed((): string => {
+  return window.location.pathname.split('/')[1] || 'home'
+})
 </script>
 
 <template>

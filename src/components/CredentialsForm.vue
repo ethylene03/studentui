@@ -1,47 +1,40 @@
-<script lang="ts">
-import type { UserCredentials } from '@/models/users'
+<script setup lang="ts">
 import { validatePassword, validateUsername } from '@/helpers/validation/users'
-import type { PropType } from 'vue'
+import type { UserCredentials } from '@/models/users'
+import { reactive } from 'vue'
 
-export default {
-  name: 'CredentialsForm',
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    submitError: {
-      type: String as PropType<string | null>,
-      default: null,
-    },
-  },
-  data() {
-    return {
-      credentials: {} as UserCredentials,
-      errors: {
-        username: [] as string[],
-        password: [] as string[],
-      },
-    }
-  },
-  methods: {
-    submitUser(event: Event) {
-      event.preventDefault()
-      this.validateCredentials()
-      if (this.errors.username.length > 0 || this.errors.password.length > 0) return
+const { label, submitError } = defineProps<{ label: string; submitError?: string }>()
+const emit = defineEmits<{ (event: 'onUserSubmit', value: UserCredentials): void }>()
 
-      this.$emit('onUserSubmit', this.credentials)
-    },
+/*<--------- FORM SUBMIT --------->*/
 
-    validateCredentials() {
-      this.errors.username = []
-      this.errors.password = []
+const credentials = reactive<UserCredentials>({
+  username: '',
+  password: '',
+})
 
-      // check credentials
-      this.errors.username = validateUsername(this.credentials.username).errors
-      this.errors.password = validatePassword(this.credentials.password).errors
-    },
-  },
+function submitUser(event: Event) {
+  event.preventDefault()
+  validateCredentials()
+  if (errors.username.length > 0 || errors.password.length > 0) return
+
+  emit('onUserSubmit', credentials)
+}
+
+/*<--------- ERROR VALIDATION --------->*/
+
+const errors = reactive<{ username: string[]; password: string[] }>({
+  username: [],
+  password: [],
+})
+
+function validateCredentials() {
+  errors.username = []
+  errors.password = []
+
+  // check credentials
+  errors.username = validateUsername(credentials.username).errors
+  errors.password = validatePassword(credentials.password).errors
 }
 </script>
 

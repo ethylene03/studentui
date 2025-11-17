@@ -15,8 +15,12 @@
           Deleting this data is not reversible. Are you sure you want to delete?
         </div>
         <div class="modal-footer border-top-0 justify-content-center gap-4">
-          <button type="button" class="btn btn-outline-primary px-5" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary px-5" @click="$emit('delete')">Delete</button>
+          <button type="button" class="btn btn-outline-primary px-5" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary px-5" @click="$emit('delete')">
+            Delete
+          </button>
         </div>
       </div>
     </div>

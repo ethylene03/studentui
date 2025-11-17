@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 import { deleteStudent, getStudents } from '@/helpers/api/students'
 import ActionBar from '@/components/ActionBar.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
@@ -8,120 +8,138 @@ import Table from '@/components/Table.vue'
 import type { Student } from '@/models/students'
 import { Modal, Toast } from 'bootstrap'
 import { debounce } from 'lodash'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-export default {
-  name: 'Students',
-  components: {
-    Navbar,
-    Table,
-    ActionBar,
-    SuccessToast,
-    DeleteModal,
+onMounted(() => {
+  fetchStudents()
+  debouncedFetch.value = debounce(() => {
+    fetchStudents(true)
+  }, 500)
+})
+
+const route = useRoute()
+const router = useRouter()
+
+/*<--------- FETCH STUDENTS --------->*/
+
+const totalCount = ref<number>(0)
+const pages = ref<number>(0)
+const students = ref<Student[]>([])
+const controller = ref<AbortController | null>(null)
+
+async function fetchStudents(reset: boolean = false) {
+  setLoading()
+
+  if (controller.value) controller.value.abort()
+  controller.value = new AbortController()
+
+  const response = await getStudents(getQuery(reset), controller.value.signal)
+
+  if (!response || 'message' in response) {
+    clearLoading()
+    return
+  }
+
+  totalCount.value = query.value ? totalCount.value : response.total
+  pages.value = response.pages
+  students.value = response.data
+
+  if(route.query.page !== response.page.toString()) {
+    router.push({ query: { ...route.query, page: (response.page + 1).toString() } })
+  }
+
+  clearLoading()
+}
+
+watch(
+  () => route.query.page,
+  () => {
+    fetchStudents()
   },
-  data() {
-    return {
-      totalCount: 0,
-      pages: 0,
-      sortWith: '',
-      sortBy: 'asc',
-      query: null as string | null,
-      students: [] as Student[],
-      toDeleteId: '',
-      isLoading: false,
-      debouncedFetch: null as ((query: string) => void) | null,
-      controller: null as AbortController | null,
-      timeoutID: null as number | null,
-    }
-  },
-  mounted() {
-    this.fetchStudents()
-    this.debouncedFetch = debounce(() => {
-      this.fetchStudents(true)
-    }, 500)
-  },
-  methods: {
-    async fetchStudents(reset: boolean = false) {
-      this.timeoutID = window.setTimeout(() => {
-        this.isLoading = true
-      }, 300)
+)
 
-      if (this.controller) this.controller.abort()
-      this.controller = new AbortController()
+/*<--------- GET QUERY DETAILS --------->*/
 
-      let page = 0
-      if (this.$route.query.page && !reset) page = Number(this.$route.query.page) - 1
+const sortWith = ref<string>('')
+const sortBy = ref<string>('asc')
+const query = ref<string | null>(null)
 
-      const sort = this.sortWith === '' ? 'id,asc' : `${this.sortWith},${this.sortBy}`
-      const size = 7
+function getQuery(reset: boolean) {
+  let page = 0
+  if (route.query.page && !reset) page = Number(route.query.page) - 1
 
-      const response = await getStudents(
-        {
-          page,
-          size,
-          sort,
-          ...(this.query ? { query: this.query } : {}),
-        },
-        this.controller.signal,
-      )
+  const sort = sortWith.value === '' ? 'id,asc' : `${sortWith.value},${sortBy.value}`
+  const size = 7
 
-      if (!response || 'message' in response) {
-        clearTimeout(this.timeoutID!)
-        this.isLoading = false
-        return
-      }
+  return { page, size, sort, ...(query.value ? { query: query.value } : {}) }
+}
 
-      this.totalCount = this.query ? this.totalCount : response.total
-      this.pages = response.pages
-      this.students = response.data
+/*<--------- MANAGE LOADING STATE --------->*/
 
-      clearTimeout(this.timeoutID!)
-      this.isLoading = false
-    },
+const timeoutID = ref<number | null>(null)
+const isLoading = ref<boolean>(false)
 
-    handleClickDelete(id: string) {
-      this.toDeleteId = id
+function setLoading() {
+  timeoutID.value = window.setTimeout(() => {
+    isLoading.value = true
+  }, 300)
+}
 
-      const modal = document.getElementById('modal--delete')
-      if (modal) {
-        const modalInstance = new Modal(modal as HTMLElement)
-        modalInstance.show()
-      }
-    },
+function clearLoading() {
+  clearTimeout(timeoutID.value!)
+  isLoading.value = false
+}
 
-    async deleteItem() {
-      if (!this.toDeleteId) return
-      const toast = document.getElementById('toast--success')
-      const modal = document.getElementById('modal--delete')
+/*<--------- DEBOUNCING FETCH --------->*/
 
-      const response = await deleteStudent(this.toDeleteId)
-      if (!response) {
-        const modalInstance = Modal.getInstance(modal as HTMLElement)
-        modalInstance?.hide()
+const debouncedFetch = ref<((query: string) => void) | null>(null)
 
-        const toastInstance = new Toast(toast as HTMLElement)
-        toastInstance.show()
+watch(query, () => {
+  debouncedFetch.value?.(query.value || '')
+})
 
-        this.fetchStudents()
-      }
-    },
+/*<--------- HANDLE SORTING --------->*/
 
-    onClickSort() {
-      this.sortBy = this.sortBy === 'asc' ? 'desc' : 'asc'
-      this.fetchStudents()
-    },
-  },
-  watch: {
-    '$route.query.page'() {
-      this.fetchStudents()
-    },
-    sortWith() {
-      this.sortBy = 'asc'
-      this.fetchStudents()
-    },
-    query(value: string) {
-      this.debouncedFetch?.(value)
-    },
-  },
+watch(sortWith, () => {
+  sortBy.value = 'asc'
+  fetchStudents()
+})
+
+function onClickSort() {
+  sortBy.value = sortBy.value === 'asc' ? 'desc' : 'asc'
+  fetchStudents()
+}
+
+/*<--------- DELETE STUDENT --------->*/
+
+const toDeleteId = ref<string>('')
+
+function handleClickDelete(id: string) {
+  toDeleteId.value = id
+
+  const modal = document.getElementById('modal--delete')
+  if (modal) {
+    const modalInstance = new Modal(modal as HTMLElement)
+    modalInstance.show()
+  }
+}
+
+async function deleteItem() {
+  if (!toDeleteId) return
+  const toast = document.getElementById('toast--success')
+  const modal = document.getElementById('modal--delete')
+
+  const response = await deleteStudent(toDeleteId.value)
+  if (!response) {
+    const modalInstance = Modal.getInstance(modal as HTMLElement)
+    modalInstance?.hide()
+
+    const toastInstance = new Toast(toast as HTMLElement)
+    toastInstance.show()
+
+    fetchStudents(true)
+  }
 }
 </script>
 

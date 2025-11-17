@@ -1,62 +1,59 @@
-<script lang="ts">
+<script setup lang="ts">
 import { getCourses } from '@/helpers/api/courses'
 import type { Course } from '@/models/courses'
 import type { ValidationError } from '@/models/global'
 import type { Student } from '@/models/students'
 import { validateAll } from '@/helpers/validation/students'
-import type { PropType } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 
-export default {
-  name: 'StudentForm',
-  props: {
-    student: {
-      type: Object as PropType<Student>,
-      default: () => ({
-        firstName: '',
-        lastName: '',
-        birthDate: new Date(),
-        age: 0,
-        email: '',
-        course: '',
-      }),
-    },
-  },
-  data() {
-    return {
-      studentCopy: { ...this.student },
-      courses: [] as Course[],
-      errors: [] as ValidationError[],
-      controller: null as AbortController | null,
-    }
-  },
-  mounted() {
-    this.fetchCourses()
-  },
-  methods: {
-    async fetchCourses() {
-      if (this.controller) this.controller.abort()
-      this.controller = new AbortController()
+onMounted(() => {
+  fetchCourses()
+})
 
-      const response = await getCourses({ page: 0, size: 100 }, this.controller.signal)
-      if (!response || 'message' in response) return
+const props = defineProps<{ student?: Student }>()
+const student = reactive<Student>({
+  id: undefined,
+  studentId: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  age: 0,
+  course: '',
+  ...props.student,
+})
 
-      this.courses = response.data
-    },
+/*<--------- FETCH COURSES --------->*/
 
-    submitStudent() {
-      if (!this.studentCopy) return
+const courses = ref<Course[]>([])
+const controller = ref<AbortController | null>(null)
+async function fetchCourses() {
+  if (controller.value) controller.value.abort()
+  controller.value = new AbortController()
 
-      this.errors = validateAll(this.studentCopy)
-      if (this.errors.filter((e) => e.errors.length > 0).length > 0) return
+  const response = await getCourses({ page: 0, size: 100 }, controller.value.signal)
+  if (!response || 'message' in response) return
 
-      this.$emit('formData', this.studentCopy)
-    },
+  courses.value = response.data
+}
 
-    getErrors(field: keyof Student): string[] {
-      const errorObj = this.errors.find((e) => e.field === field)
-      return errorObj ? errorObj.errors : []
-    },
-  },
+/*<--------- FORM SUBMIT --------->*/
+
+const emit = defineEmits<{ (event: 'formData', value: Student): void }>()
+function submitStudent() {
+  if (!student) return
+
+  errors.value = validateAll(student)
+  if (errors.value.filter((e) => e.errors.length > 0).length > 0) return
+
+  emit('formData', student)
+}
+
+/*<--------- ERROR HANDLING --------->*/
+
+const errors = ref<ValidationError[]>([])
+function getErrors(field: keyof Student): string[] {
+  const errorObj = errors.value.find((e) => e.field === field)
+  return errorObj ? errorObj.errors : []
 }
 </script>
 
@@ -77,7 +74,7 @@ export default {
           class="form-control-plaintext"
           id="studentId"
           placeholder="N/A"
-          v-model="studentCopy.studentId"
+          v-model="student.studentId"
           required
           readonly
         />
@@ -92,7 +89,7 @@ export default {
           class="form-control"
           id="firstName"
           placeholder="Jane"
-          v-model="studentCopy.firstName"
+          v-model="student.firstName"
           required
         />
         <div
@@ -113,7 +110,7 @@ export default {
           class="form-control"
           id="lastName"
           placeholder="Doe"
-          v-model="studentCopy.lastName"
+          v-model="student.lastName"
           required
         />
         <div class="form-text text-danger mt-1" v-for="error in getErrors('lastName')" :key="error">
@@ -132,7 +129,7 @@ export default {
           class="form-control"
           id="email"
           placeholder="example@email.com"
-          v-model="studentCopy.email"
+          v-model="student.email"
           required
         />
         <div class="form-text text-danger mt-1" v-for="error in getErrors('email')" :key="error">
@@ -149,7 +146,7 @@ export default {
           class="form-control"
           id="age"
           placeholder="0"
-          v-model="studentCopy.age"
+          v-model="student.age"
         />
         <div class="form-text text-danger mt-1" v-for="error in getErrors('age')" :key="error">
           {{ error }}
@@ -160,7 +157,7 @@ export default {
           Course
           <span class="text-danger">*</span>
         </label>
-        <select class="form-select" id="course" v-model="studentCopy.course" required>
+        <select class="form-select" id="course" v-model="student.course" required>
           <option value="" disabled>Select a Course</option>
           <option v-for="course in courses" :key="course.id" :value="course.name">
             {{ course.name }}

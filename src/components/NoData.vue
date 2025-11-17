@@ -1,13 +1,7 @@
-<script lang="ts">
-export default {
-  name: 'NoData',
-  props: {
-    message: {
-      type: String,
-      default: 'No data available.',
-    },
-  },
-}
+<script setup lang="ts">
+const { message } = withDefaults(defineProps<{ message?: string }>(), {
+  message: 'No data available.',
+})
 </script>
 
 <template>

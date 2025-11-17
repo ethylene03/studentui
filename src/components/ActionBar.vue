@@ -1,45 +1,39 @@
-<script lang="ts">
+<script setup lang="ts">
 import { camelToTitle, getPath } from '@/helpers/utils'
+import { ref, watch } from 'vue'
 
-export default {
-  name: 'ActionBar',
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    sortOptions: {
-      type: Array as () => Array<string>,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      sortWith: '',
-      sortBy: 'asc',
-      query: '',
-    }
-  },
-  methods: {
-    camelToTitle,
-    getPath,
-    onClickSort() {
-      this.sortBy = this.sortBy === 'asc' ? 'desc' : 'asc'
-      this.$emit('onClickSortBy')
-    },
-    searchText() {
-      this.$emit('onSearchText', this.query)
-    },
-  },
-  watch: {
-    sortWith() {
-      this.sortBy = 'asc'
-      this.$emit('onChangeSortWith', this.sortWith)
-    },
-    query() {
-      this.searchText()
-    },
-  },
+/*<--------- EMIT/PROPS --------->*/
+
+const { label, sortOptions } = defineProps<{ label: string; sortOptions: Array<string> }>()
+const emit = defineEmits<{
+  (event: 'onSearchText', value: string): void
+  (event: 'onClickSortBy'): void
+  (event: 'onChangeSortWith', value: string): void
+}>()
+
+/*<--------- HANDLE SORTING --------->*/
+
+const sortBy = ref<string>('asc')
+function onClickSort() {
+  sortBy.value = sortBy.value === 'asc' ? 'desc' : 'asc'
+  emit('onClickSortBy')
+}
+
+const sortWith = ref<string>('')
+watch(sortWith, () => {
+  sortBy.value = 'asc'
+  emit('onChangeSortWith', sortWith.value)
+})
+
+/*<--------- SEARCHING --------->*/
+
+const query = ref<string>('')
+watch(query, () => {
+  searchText()
+})
+
+function searchText() {
+  emit('onSearchText', query.value)
 }
 </script>
 
@@ -58,7 +52,11 @@ export default {
           v-model="query"
           :placeholder="'Search ' + label + '...'"
         />
-        <button class="input-group-text bg-transparent border-0 text-primary" @click="searchText">
+        <button
+          id="search--button"
+          class="input-group-text bg-transparent border-0 text-primary"
+          @click="searchText"
+        >
           <i class="fas fa-magnifying-glass"></i>
         </button>
       </div>
@@ -73,7 +71,11 @@ export default {
             </option>
           </template>
         </select>
-        <button class="btn text-primary border border-primary bg-white" @click="onClickSort" :class="{ disabled: !sortWith }">
+        <button
+          class="btn text-primary border border-primary bg-white"
+          @click="onClickSort"
+          :class="{ disabled: !sortWith }"
+        >
           <i v-if="sortBy === 'asc'" class="fas fa-arrow-down-a-z"></i>
           <i v-else class="fas fa-arrow-up-a-z"></i>
         </button>
@@ -86,5 +88,9 @@ export default {
 #searchInput:focus {
   outline: none;
   box-shadow: none;
+}
+
+#search--button {
+  cursor: pointer;
 }
 </style>
