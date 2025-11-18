@@ -5,12 +5,14 @@ import type { ValidationError } from '@/models/global'
 import type { Student } from '@/models/students'
 import { validateAll } from '@/helpers/validation/students'
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 onMounted(() => {
   fetchCourses()
 })
 
 const props = defineProps<{ student?: Student; isLoading: boolean }>()
+const savedSessionData = sessionStorage.getItem('studentFormData')
 const student = reactive<Student>({
   id: undefined,
   studentId: '',
@@ -20,6 +22,7 @@ const student = reactive<Student>({
   age: 0,
   course: '',
   ...props.student,
+  ...(savedSessionData ? JSON.parse(savedSessionData) : {}),
 })
 
 /*<--------- FETCH COURSES --------->*/
@@ -45,6 +48,7 @@ function submitStudent() {
   errors.value = validateAll(student)
   if (errors.value.filter((e) => e.errors.length > 0).length > 0) return
 
+  sessionStorage.removeItem('studentFormData')
   emit('formData', student)
 }
 
@@ -54,6 +58,22 @@ const errors = ref<ValidationError[]>([])
 function getErrors(field: keyof Student): string[] {
   const errorObj = errors.value.find((e) => e.field === field)
   return errorObj ? errorObj.errors : []
+}
+
+/*<--------- SESSION MANAGEMENT --------->*/
+
+const router = useRouter()
+
+function saveSession() {
+  sessionStorage.setItem('studentFormData', JSON.stringify(student))
+
+  router.push({ name: 'AddCourse' })
+}
+
+function clearSession() {
+  sessionStorage.removeItem('studentFormData')
+
+  router.back()
 }
 </script>
 
@@ -159,10 +179,7 @@ function getErrors(field: keyof Student): string[] {
         </select>
         <div id="courseHelp" class="form-text">
           Create a new
-          <a
-            @click="$router.push('/courses/add')"
-            class="text-primary text-underline"
-            style="cursor: pointer"
+          <a @click="saveSession" class="text-primary text-underline" style="cursor: pointer"
             >course</a
           >
           if course does not exist.
@@ -170,7 +187,7 @@ function getErrors(field: keyof Student): string[] {
       </div>
     </div>
     <div class="d-flex flex-wrap mt-5 gap-4">
-      <button type="button" class="btn btn-outline-primary flex-fill" @click="$router.back()">
+      <button type="button" class="btn btn-outline-primary flex-fill" @click="clearSession">
         Cancel
       </button>
       <button type="submit" class="btn btn-primary flex-fill" :disabled="isLoading">

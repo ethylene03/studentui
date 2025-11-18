@@ -17,8 +17,7 @@ const credentials = reactive<UserCredentials>({
   password: '',
 })
 
-function submitUser(event: Event) {
-  event.preventDefault()
+function submitUser() {
   validateCredentials()
   if (errors.username.length > 0 || errors.password.length > 0) return
 
@@ -43,7 +42,7 @@ function validateCredentials() {
 </script>
 
 <template>
-  <form id="login--form" class="mt-4" @submit="submitUser">
+  <form id="login--form" class="mt-4" @submit.prevent="submitUser">
     <div class="mb-3">
       <label for="username" class="form-label">Username</label>
       <input
