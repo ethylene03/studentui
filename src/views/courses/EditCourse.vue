@@ -49,7 +49,7 @@ async function fetchCourseData() {
 const editLoading = ref<boolean>(false)
 async function editCourse(course: Course) {
   editLoading.value = true
-  const toast = document.getElementById('toast--success')
+  const toast = document.getElementById('toast--edit-course')
   const response = await updateCourse(id.value, course)
 
   if ('message' in response) {
@@ -83,7 +83,8 @@ async function editCourse(course: Course) {
       <Spinner v-if="isLoading" />
       <NoData v-else-if="!isLoading && !course" message="Course not found." />
     </div>
+
     <CourseForm v-else :course="course" @formData="editCourse" :isLoading="editLoading" />
-    <SuccessToast message="Course updated successfully!" />
+    <SuccessToast id="toast--edit-course" message="Course updated successfully!" />
   </section>
 </template>

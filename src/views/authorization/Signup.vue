@@ -17,7 +17,7 @@ const router = useRouter()
 async function signupUser(credentials: UserCredentials) {
   isLoading.value = true
 
-  const toast = document.getElementById('toast--success')
+  const toast = document.getElementById('toast--signup')
   const response = await signup(credentials)
   if ('message' in response) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
@@ -48,6 +48,6 @@ async function signupUser(credentials: UserCredentials) {
     />
     <div class="mt-3 text-center"><a class="mt-3 text-center" href="/">Back to Login</a></div>
 
-    <SuccessToast message="Signup successful!" />
+    <SuccessToast id="toast--signup" message="Signup successful!" />
   </section>
 </template>

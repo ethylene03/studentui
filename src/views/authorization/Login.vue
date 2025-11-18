@@ -17,7 +17,7 @@ const router = useRouter()
 
 async function loginUser(credentials: UserCredentials) {
   isLoading.value = true
-  const toast = document.getElementById('toast--success')
+  const toast = document.getElementById('toast--login')
 
   const auth = useAuthorizationStore()
   const response = await login(credentials)
@@ -57,6 +57,6 @@ async function loginUser(credentials: UserCredentials) {
       <a class="mt-3 text-center" href="/signup">Sign up</a>
     </div>
 
-    <SuccessToast message="Login successful!" />
+    <SuccessToast id="toast--login" message="Login successful!" />
   </section>
 </template>

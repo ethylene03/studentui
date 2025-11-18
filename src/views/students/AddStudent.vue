@@ -17,7 +17,7 @@ const router = useRouter()
 
 async function createStudent(student: Student) {
   isLoading.value = true
-  const toast = document.getElementById('toast--success')
+  const toast = document.getElementById('toast--add-student')
   const response = await addStudent(student)
 
   if ('message' in response) {
@@ -48,6 +48,6 @@ async function createStudent(student: Student) {
     </div>
 
     <StudentForm @formData="createStudent" :isLoading="isLoading" />
-    <SuccessToast message="Student added successfully!" />
+    <SuccessToast id="toast--add-student" message="Student added successfully!" />
   </section>
 </template>

@@ -3,6 +3,8 @@ import { logout } from '@/helpers/api/authorization'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Toast } from 'bootstrap'
+import SuccessToast from './SuccessToast.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -13,7 +15,13 @@ async function logoutUser() {
   const auth = useAuthorizationStore()
   auth.clearToken()
 
-  router.push('/')
+  const toast = document.getElementById('toast--logout')
+  const toastInstance = new Toast(toast as HTMLElement)
+  toastInstance.show()
+
+  setTimeout(() => {
+    router.push('/')
+  }, 500)
 }
 
 const currentPath = computed((): string => {
@@ -67,6 +75,7 @@ const currentPath = computed((): string => {
         </ul>
       </div>
     </div>
+    <SuccessToast id="toast--logout" message="Logged out successfully!" />
   </nav>
 </template>
 

@@ -45,7 +45,7 @@ async function fetchStudents(reset: boolean = false) {
   pages.value = response.pages
   students.value = response.data
 
-  if(route.query.page !== response.page.toString()) {
+  if (route.query.page !== response.page.toString()) {
     router.push({ query: { ...route.query, page: (response.page + 1).toString() } })
   }
 
@@ -127,7 +127,7 @@ function showDeleteModal(id: string) {
 
 async function deleteItem() {
   if (!toDeleteId) return
-  const toast = document.getElementById('toast--success')
+  const toast = document.getElementById('toast--delete-student')
   const modal = document.getElementById('modal--delete')
 
   const response = await deleteStudent(toDeleteId.value)
@@ -161,7 +161,7 @@ async function deleteItem() {
 
     <Table :data="students" :pages="pages" @deleteItem="showDeleteModal" :isLoading="isLoading" />
 
-    <SuccessToast message="Student deleted successfully!" />
+    <SuccessToast id="toast--delete-student" message="Student deleted successfully!" />
     <DeleteModal @delete="deleteItem" />
   </section>
 </template>

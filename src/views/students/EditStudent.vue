@@ -48,7 +48,7 @@ async function fetchStudent() {
 const editLoading = ref<boolean>(false)
 async function editStudent(student: Student) {
   editLoading.value = true
-  const toast = document.getElementById('toast--success')
+  const toast = document.getElementById('toast--edit-student')
   const response = await updateStudent(id.value, student)
   if ('message' in response) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
@@ -81,7 +81,8 @@ async function editStudent(student: Student) {
       <Spinner v-if="isLoading" />
       <NoData v-else-if="!isLoading && !student" message="Student not found." />
     </div>
+
     <StudentForm v-else :student="student" @formData="editStudent" :isLoading="editLoading" />
-    <SuccessToast message="Student updated successfully!" />
+    <SuccessToast id="toast--edit-student" message="Student updated successfully!" />
   </section>
 </template>

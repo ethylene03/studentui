@@ -127,7 +127,7 @@ function showDeleteModal(id: string) {
 
 async function deleteItem() {
   if (!toDeleteId) return
-  const toast = document.getElementById('toast--success')
+  const toast = document.getElementById('toast--delete-course')
   const modal = document.getElementById('modal--delete')
 
   const response = await deleteCourse(toDeleteId.value)
@@ -161,7 +161,7 @@ async function deleteItem() {
 
     <Table :data="courses" :pages="pages" @deleteItem="showDeleteModal" :isLoading="isLoading" />
 
-    <SuccessToast message="Course deleted successfully!" />
+    <SuccessToast id="toast--delete-course" message="Course deleted successfully!" />
     <DeleteModal @delete="deleteItem" />
   </section>
 </template>
