@@ -9,6 +9,7 @@ import AddCourse from '@/views/courses/AddCourse.vue'
 import EditCourse from '@/views/courses/EditCourse.vue'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import Signup from '@/views/authorization/Signup.vue'
+import { refreshToken } from '@/helpers/api/authorization'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,14 +40,22 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const auth = useAuthorizationStore()
+
+  if (!auth.isLoggedIn() && to.name !== 'Login') {
+    const newToken = await refreshToken()
+    if (newToken.token) auth.setToken(newToken.token)
+  }
+
   if (to.meta.requiresAuth && !auth.isLoggedIn()) {
     next({ name: 'Login' })
+    return
   }
 
   if (to.name === 'Login' && auth.isLoggedIn()) {
     next({ name: 'Students' })
+    return
   }
 
   next()

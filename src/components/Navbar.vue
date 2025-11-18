@@ -2,17 +2,22 @@
 import { logout } from '@/helpers/api/authorization'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
 
 async function logoutUser() {
   await logout()
 
-  const auht = useAuthorizationStore()
-  auht.clearToken()
-  window.location.reload()
+  const auth = useAuthorizationStore()
+  auth.clearToken()
+
+  router.push('/')
 }
 
 const currentPath = computed((): string => {
-  return window.location.pathname.split('/')[1] || 'home'
+  return route.path.split('/')[1] || 'home'
 })
 </script>
 

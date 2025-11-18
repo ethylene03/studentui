@@ -30,14 +30,13 @@ async function loginUser(credentials: UserCredentials) {
   }
 
   auth.setToken(response.token)
-  auth.refreshTime()
 
   const toastInstance = new Toast(toast as HTMLElement)
   toastInstance.show()
 
   setTimeout(() => {
     isLoading.value = false
-    window.location.reload()
+    router.push('/students')
   }, 500)
 }
 </script>

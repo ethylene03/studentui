@@ -1,5 +1,6 @@
 import type { ErrorResponse } from '@/models/global'
 import type { User, UserCredentials, UserToken } from '@/models/users'
+import { useRouter } from 'vue-router'
 
 function getUrl(path: string = ''): string {
   return 'http://localhost:8080/auth' + path
@@ -50,6 +51,7 @@ async function logout(): Promise<void> {
   try {
     const response = await fetch(getUrl(), {
       method: 'DELETE',
+      credentials: 'include',
       headers,
     })
 

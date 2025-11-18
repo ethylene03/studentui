@@ -1,11 +1,12 @@
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
-import axios from 'axios'
 import { refreshToken } from './authorization'
 
 const baseUrl = 'http://localhost:8080'
 
 function getHeaders() {
-  const token = localStorage.getItem('token') || ''
+  const auth = useAuthorizationStore()
+  const token = auth.token
+
   return new Headers({
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
@@ -51,7 +52,6 @@ async function fetchApi(request: Request) {
     const auth = useAuthorizationStore()
     const newToken = await refreshToken()
     auth.setToken(newToken.token)
-    auth.refreshTime()
 
     request.headers.set('Authorization', `Bearer ${newToken.token}`)
     return await fetch(request)
@@ -59,44 +59,5 @@ async function fetchApi(request: Request) {
 
   return response
 }
-
-const api = axios.create({
-  baseURL: baseUrl,
-  timeout: 5000,
-})
-
-api.interceptors.request.use(
-  (request) => {
-    const token = localStorage.getItem('token') || null
-    if (token) request.headers['Authorization'] = `Bearer ${token}`
-    return request
-  },
-  (error) => {
-    return Promise.reject(error)
-  },
-)
-
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const request = error.config
-    if (error.response?.status === 403 && !request._retry) {
-      request._retry = true
-      try {
-        const auth = useAuthorizationStore()
-
-        const response = await refreshToken()
-        auth.setToken(response.token)
-        auth.refreshTime()
-
-        api.defaults.headers.common['Authorization'] = `Bearer ${response.token}`
-        return api(request)
-      } catch (error) {
-        return Promise.reject(error)
-      }
-    }
-    return Promise.reject(error)
-  },
-)
 
 export { fetchApi, POST, GET, PUT, DELETE }
