@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const { message } = withDefaults(defineProps<{ message?: string }>(), {
-  message: 'No data available.',
-})
+const { message } = defineProps<{ message?: string }>()
+
+const description = message || 'No data available.'
 </script>
 
 <template>
@@ -11,6 +11,6 @@ const { message } = withDefaults(defineProps<{ message?: string }>(), {
       alt="no data available"
       class="d-block mx-auto my-5 w-25"
     />
-    <p class="text-center my-5">{{ message }}</p>
+    <p class="text-center my-5">{{ description }}</p>
   </div>
 </template>

@@ -43,13 +43,9 @@ async function fetchStudents(reset: boolean = false) {
     return
   }
 
-  totalCount.value = query.value ? totalCount.value : response.total
+  totalCount.value = search.value ? totalCount.value : response.total
   pages.value = response.pages
   students.value = response.data
-
-  if (route.query.page !== response.page.toString()) {
-    router.push({ query: { ...route.query, page: (response.page + 1).toString() } })
-  }
 
   clearLoading()
 }
@@ -65,7 +61,7 @@ watch(
 
 const sortWith = ref<string>('')
 const sortBy = ref<string>('asc')
-const query = ref<string | null>(null)
+const search = ref<string | null>(null)
 
 function getQuery(reset: boolean): Record<string, string> {
   let page = 0
@@ -78,7 +74,7 @@ function getQuery(reset: boolean): Record<string, string> {
     page: page.toString(),
     size: size.toString(),
     sort,
-    ...(query.value ? { query: query.value } : {}),
+    ...(search.value ? { query: search.value } : {}),
   }
 }
 
@@ -102,8 +98,8 @@ function clearLoading() {
 
 const debouncedFetch = ref<((query: string) => void) | null>(null)
 
-watch(query, () => {
-  debouncedFetch.value?.(query.value || '')
+watch(search, () => {
+  debouncedFetch.value?.(search.value || '')
 })
 
 /*<--------- HANDLE SORTING --------->*/
@@ -145,6 +141,7 @@ async function deleteItem() {
     const toastInstance = new Toast(toast as HTMLElement)
     toastInstance.show()
 
+    totalCount.value -= 1
     fetchStudents(true)
   }
 }
@@ -163,7 +160,7 @@ async function deleteItem() {
       <ActionBar
         label="Student"
         :sortOptions="Object.keys(students[0] || {})"
-        @onSearchText="query = $event"
+        @onSearchText="search = $event"
         @onClickSortBy="onClickSort"
         @onChangeSortWith="sortWith = $event"
       />

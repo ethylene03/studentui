@@ -27,13 +27,13 @@ watch(sortWith, () => {
 
 /*<--------- SEARCHING --------->*/
 
-const query = ref<string>('')
-watch(query, () => {
+const search = ref<string>('')
+watch(search, () => {
   searchText()
 })
 
 function searchText() {
-  emit('onSearchText', query.value)
+  emit('onSearchText', search.value)
 }
 </script>
 
@@ -49,7 +49,7 @@ function searchText() {
           id="searchInput"
           type="text"
           class="form-control rounded-3 border-0 bg-transparent"
-          v-model="query"
+          v-model="search"
           :placeholder="'Search ' + label + '...'"
           aria-label="Search Input"
         />
