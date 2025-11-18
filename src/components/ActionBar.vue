@@ -56,6 +56,7 @@ function searchText() {
           id="search--button"
           class="input-group-text bg-transparent border-0 text-primary"
           @click="searchText"
+          aria-label="Search Button"
         >
           <i class="fas fa-magnifying-glass"></i>
         </button>
@@ -63,7 +64,7 @@ function searchText() {
 
       <div class="d-flex align-items-center gap-3">
         <label for="sortWith" class="text-nowrap mb-0">Sort By:</label>
-        <select v-model="sortWith" class="form-select border border-primary">
+        <select id="sortWith" v-model="sortWith" class="form-select border border-primary">
           <option value="" hidden>Sort by..</option>
           <template v-for="option in sortOptions" :key="option">
             <option v-if="option !== 'id'" :value="option">
@@ -75,6 +76,7 @@ function searchText() {
           class="btn text-primary border border-primary bg-white"
           @click="onClickSort"
           :class="{ disabled: !sortWith }"
+          aria-label="Sort Button"
         >
           <i v-if="sortBy === 'asc'" class="fas fa-arrow-down-a-z"></i>
           <i v-else class="fas fa-arrow-up-a-z"></i>

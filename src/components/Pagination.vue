@@ -38,15 +38,14 @@ function getPagination(current: number, total: number): string[] {
   >
     <ul class="pagination mb-0">
       <li class="page-item" style="cursor: pointer" :class="{ disabled: currentPage <= 1 }">
-        <a
+        <span
           class="page-link text-primary"
-          aria-label="Previous"
           @click="$router.push({ query: { page: currentPage - 1 } })"
         >
           <span aria-hidden="true">
             <i class="fas fa-angle-left"></i>
           </span>
-        </a>
+        </span>
       </li>
 
       <li
@@ -56,19 +55,18 @@ function getPagination(current: number, total: number): string[] {
         style="cursor: pointer"
         :class="{ disabled: n === currentPage.toString() || n === '…' }"
       >
-        <a class="page-link text-primary" @click="$router.push({ query: { page: n } })">{{ n }}</a>
+        <span class="page-link text-primary" @click="$router.push({ query: { page: n } })">{{ n }}</span>
       </li>
 
       <li class="page-item" style="cursor: pointer" :class="{ disabled: currentPage >= pages }">
-        <a
+        <span
           class="page-link text-primary"
-          aria-label="Next"
           @click="$router.push({ query: { page: currentPage + 1 } })"
         >
           <span aria-hidden="true">
             <i class="fas fa-angle-right"></i>
           </span>
-        </a>
+        </span>
       </li>
     </ul>
   </nav>
