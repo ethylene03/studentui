@@ -37,6 +37,12 @@
   opacity: 100%;
 }
 
+.btn--link {
+  color: var(--bs-primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .border-primary {
   border-color: var(--bs-primary) !important;
 }
@@ -63,4 +69,8 @@ a {
   color: var(--bs-primary);
   box-shadow: 0 0 0 0.25rem rgba(135, 65, 248, 0.25);
   border-color: var(--bs-primary-bg-subtle);
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

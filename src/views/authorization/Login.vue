@@ -54,7 +54,7 @@ async function loginUser(credentials: UserCredentials) {
 
     <div class="mt-3 text-center">
       Don't have an account?
-      <a class="mt-3 text-center" href="/signup">Sign up</a>
+      <span class="mt-3 text-center btn--link" @click="$router.push('/signup')">Sign up</span>
     </div>
 
     <SuccessToast id="toast--login" message="Login successful!" />

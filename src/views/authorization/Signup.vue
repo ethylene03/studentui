@@ -46,7 +46,9 @@ async function signupUser(credentials: UserCredentials) {
       :submitError="errorMessage"
       @onUserSubmit="signupUser"
     />
-    <div class="mt-3 text-center"><a class="mt-3 text-center" href="/">Back to Login</a></div>
+    <div class="mt-3 text-center">
+      <span class="mt-3 text-center btn--link" @click="$router.push('/')">Back to Login</span>
+    </div>
 
     <SuccessToast id="toast--signup" message="Signup successful!" />
   </section>

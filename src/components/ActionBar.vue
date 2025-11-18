@@ -54,7 +54,7 @@ function searchText() {
         />
         <button
           id="search--button"
-          class="input-group-text bg-transparent border-0 text-primary"
+          class="input-group-text bg-transparent border-0 text-primary cursor-pointer"
           @click="searchText"
           aria-label="Search Button"
         >
@@ -90,9 +90,5 @@ function searchText() {
 #searchInput:focus {
   outline: none;
   box-shadow: none;
-}
-
-#search--button {
-  cursor: pointer;
 }
 </style>
