@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { camelToTitle, getPath } from '@/helpers/utils'
+import type { Course } from '@/models/courses'
+import type { Student } from '@/models/students'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Pagination from './Pagination.vue'
 import NoData from './NoData.vue'
+import Pagination from './Pagination.vue'
 import Spinner from './Spinner.vue'
 
 const dataLoaded = ref<boolean>(false)
@@ -14,7 +16,7 @@ onMounted(() => {
 })
 
 const { data, pages, isLoading } = defineProps<{
-  data: Array<Record<string, any>>
+  data: Array<Student | Course>
   pages: number
   isLoading: boolean
 }>()
@@ -22,12 +24,12 @@ const { data, pages, isLoading } = defineProps<{
 const emit = defineEmits<{ (event: 'deleteItem', value: string): void }>()
 const router = useRouter()
 
-function handleAction(item: any, action: string) {
+function handleAction(item: Student | Course, action: string) {
   if (action === 'delete') {
-    emit('deleteItem', (item as any).id)
+    emit('deleteItem', item.id)
   } else {
     router.push({
-      path: `/${getPath()}/${(item as any).id}/${action}`,
+      path: `/${getPath()}/${item.id}/${action}`,
     })
   }
 }

@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { refreshToken } from '@/helpers/api/authorization'
+import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import Login from '@/views/authorization/Login.vue'
-import Students from '@/views/students/Students.vue'
+import Signup from '@/views/authorization/Signup.vue'
+import AddCourse from '@/views/courses/AddCourse.vue'
 import Courses from '@/views/courses/Courses.vue'
+import EditCourse from '@/views/courses/EditCourse.vue'
 import AddStudent from '@/views/students/AddStudent.vue'
 import EditStudent from '@/views/students/EditStudent.vue'
-import AddCourse from '@/views/courses/AddCourse.vue'
-import EditCourse from '@/views/courses/EditCourse.vue'
-import { useAuthorizationStore } from '@/helpers/stores/authorization'
-import Signup from '@/views/authorization/Signup.vue'
-import { refreshToken } from '@/helpers/api/authorization'
+import Students from '@/views/students/Students.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

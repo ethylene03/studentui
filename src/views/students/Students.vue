@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { deleteStudent, getStudents } from '@/helpers/api/students'
 import ActionBar from '@/components/ActionBar.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
+import Header from '@/components/Header.vue'
 import Navbar from '@/components/Navbar.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import Table from '@/components/Table.vue'
+import { deleteStudent, getStudents } from '@/helpers/api/students'
+import { isError } from '@/helpers/utils'
 import type { Student } from '@/models/students'
 import { Modal, Toast } from 'bootstrap'
 import { debounce } from 'lodash'
@@ -36,7 +38,7 @@ async function fetchStudents(reset: boolean = false) {
 
   const response = await getStudents(getQuery(reset), controller.value.signal)
 
-  if (!response || 'message' in response) {
+  if (!response || isError(response)) {
     clearLoading()
     return
   }
@@ -65,14 +67,19 @@ const sortWith = ref<string>('')
 const sortBy = ref<string>('asc')
 const query = ref<string | null>(null)
 
-function getQuery(reset: boolean) {
+function getQuery(reset: boolean): Record<string, string> {
   let page = 0
   if (route.query.page && !reset) page = Number(route.query.page) - 1
 
   const sort = sortWith.value === '' ? 'id,asc' : `${sortWith.value},${sortBy.value}`
   const size = 7
 
-  return { page, size, sort, ...(query.value ? { query: query.value } : {}) }
+  return {
+    page: page.toString(),
+    size: size.toString(),
+    sort,
+    ...(query.value ? { query: query.value } : {}),
+  }
 }
 
 /*<--------- MANAGE LOADING STATE --------->*/
@@ -148,8 +155,11 @@ async function deleteItem() {
     <Navbar />
 
     <div class="container mt-5 text-center text-md-start">
-      <h2>Student Directory</h2>
-      <p class="lead text-primary">Total students enrolled: {{ totalCount }}</p>
+      <Header
+        title="Student Directory"
+        :description="'Total students enrolled: ' + totalCount"
+        type="Main"
+      />
       <ActionBar
         label="Student"
         :sortOptions="Object.keys(students[0] || {})"

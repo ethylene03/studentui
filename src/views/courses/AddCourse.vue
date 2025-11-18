@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { addCourse } from '@/helpers/api/courses'
 import CourseForm from '@/components/CourseForm.vue'
+import Header from '@/components/Header.vue'
 import Navbar from '@/components/Navbar.vue'
-import { getMessage } from '@/helpers/utils'
-import type { Course } from '@/models/courses'
+import SuccessToast from '@/components/SuccessToast.vue'
+import { addCourse } from '@/helpers/api/courses'
+import { getMessage, isError } from '@/helpers/utils'
+import type { CourseDetails } from '@/models/courses'
+import { Toast } from 'bootstrap'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import SuccessToast from '@/components/SuccessToast.vue'
-import { Toast } from 'bootstrap'
 
 /*<--------- ADD COURSE --------->*/
 
@@ -15,15 +16,16 @@ const errorMessage = ref<string>('')
 const isLoading = ref<boolean>(false)
 const router = useRouter()
 
-async function createCourse(course: Course) {
+async function createCourse(course: CourseDetails) {
   isLoading.value = true
   const toast = document.getElementById('toast--add-course')
   const response = await addCourse(course)
 
-  if ('message' in response) {
+  if (isError(response)) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
-    else errorMessage.value = response.message as string
+    else errorMessage.value = response.message
 
+    isLoading.value = false
     return
   }
 
@@ -42,8 +44,7 @@ async function createCourse(course: Course) {
     <Navbar />
 
     <div class="container mt-5 text-center text-md-start">
-      <h2>Add New Course</h2>
-      <p>Please fill in the details below.</p>
+      <Header title="Add New Course" description="Please fill in the details below." type="Form" />
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { getCourses } from '@/helpers/api/courses'
+import { isError } from '@/helpers/utils'
+import { validateAll } from '@/helpers/validation/students'
 import type { Course } from '@/models/courses'
 import type { ValidationError } from '@/models/global'
-import type { Student } from '@/models/students'
-import { validateAll } from '@/helpers/validation/students'
+import type { StudentDetails } from '@/models/students'
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -11,10 +12,9 @@ onMounted(() => {
   fetchCourses()
 })
 
-const props = defineProps<{ student?: Student; isLoading: boolean }>()
+const props = defineProps<{ student?: StudentDetails; isLoading: boolean }>()
 const savedSessionData = sessionStorage.getItem('studentFormData')
-const student = reactive<Student>({
-  id: undefined,
+const student = reactive<StudentDetails>({
   studentId: '',
   firstName: '',
   lastName: '',
@@ -33,15 +33,15 @@ async function fetchCourses() {
   if (controller.value) controller.value.abort()
   controller.value = new AbortController()
 
-  const response = await getCourses({ page: 0, size: 100 }, controller.value.signal)
-  if (!response || 'message' in response) return
+  const response = await getCourses({ page: '0', size: '100' }, controller.value.signal)
+  if (!response || isError(response)) return
 
   courses.value = response.data
 }
 
 /*<--------- FORM SUBMIT --------->*/
 
-const emit = defineEmits<{ (event: 'formData', value: Student): void }>()
+const emit = defineEmits<{ (event: 'formData', value: StudentDetails): void }>()
 function submitStudent() {
   if (!student) return
 
@@ -55,7 +55,7 @@ function submitStudent() {
 /*<--------- ERROR HANDLING --------->*/
 
 const errors = ref<ValidationError[]>([])
-function getErrors(field: keyof Student): string[] {
+function getErrors(field: keyof StudentDetails): string[] {
   const errorObj = errors.value.find((e) => e.field === field)
   return errorObj ? errorObj.errors : []
 }

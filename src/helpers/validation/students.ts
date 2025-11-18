@@ -1,7 +1,7 @@
 import type { ValidationError } from '@/models/global'
-import type { Student } from '@/models/students'
+import type { StudentDetails } from '@/models/students'
 
-function validateAll(student: Student): ValidationError[] {
+function validateAll(student: StudentDetails): ValidationError[] {
   const errors: ValidationError[] = []
 
   const firstNameErrors = validateName(student.firstName)
@@ -62,4 +62,4 @@ function validateEmail(input: string): ValidationError {
   } as ValidationError
 }
 
-export { validateAll, validateName, validateAge, validateEmail }
+export { validateAge, validateAll, validateEmail, validateName }

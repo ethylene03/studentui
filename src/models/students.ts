@@ -1,5 +1,5 @@
 export interface Student {
-  id?: string
+  id: string
   studentId: string
   firstName: string
   lastName: string
@@ -7,6 +7,8 @@ export interface Student {
   email: string
   course: string
 }
+
+export type StudentDetails = Omit<Student, 'id'>
 
 export interface StudentList {
   total: number

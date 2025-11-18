@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { getCourse, updateCourse } from '@/helpers/api/courses'
 import CourseForm from '@/components/CourseForm.vue'
+import Header from '@/components/Header.vue'
 import Navbar from '@/components/Navbar.vue'
 import NoData from '@/components/NoData.vue'
 import Spinner from '@/components/Spinner.vue'
-import { getMessage } from '@/helpers/utils'
-import type { Course } from '@/models/courses'
-import { onMounted, reactive, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import SuccessToast from '@/components/SuccessToast.vue'
+import { getCourse, updateCourse } from '@/helpers/api/courses'
+import { getMessage, isError } from '@/helpers/utils'
+import type { CourseDetails } from '@/models/courses'
 import { Toast } from 'bootstrap'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 onMounted(() => {
   fetchCourseData()
@@ -20,7 +21,7 @@ const route = useRoute()
 
 /*<--------- FETCH EXISTING COURSE --------->*/
 
-const course = ref<Course | null>(null)
+const course = ref<CourseDetails | null>(null)
 const id = ref<string>('')
 const errorMessage = ref<string>('')
 const isLoading = ref<boolean>(false)
@@ -31,9 +32,9 @@ async function fetchCourseData() {
   const routeID = route.params.id as string
   const response = await getCourse(routeID)
 
-  if ('message' in response) {
+  if (isError(response)) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
-    else errorMessage.value = response.message as string
+    else errorMessage.value = response.message
 
     isLoading.value = false
     return
@@ -47,15 +48,16 @@ async function fetchCourseData() {
 /*<--------- EDIT COURSE --------->*/
 
 const editLoading = ref<boolean>(false)
-async function editCourse(course: Course) {
+async function editCourse(course: CourseDetails) {
   editLoading.value = true
   const toast = document.getElementById('toast--edit-course')
   const response = await updateCourse(id.value, course)
 
-  if ('message' in response) {
+  if (isError(response)) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
-    else errorMessage.value = response.message as string
+    else errorMessage.value = response.message
 
+    editLoading.value = false
     return
   }
 
@@ -74,8 +76,11 @@ async function editCourse(course: Course) {
     <Navbar />
 
     <div class="container mt-5 text-center text-md-start">
-      <h2>Edit Course Details</h2>
-      <p>Please fill in the details below.</p>
+      <Header
+        title="Edit Course Details"
+        description="Please fill in the details below."
+        type="Form"
+      />
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 

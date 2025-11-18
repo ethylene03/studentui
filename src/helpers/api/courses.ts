@@ -1,8 +1,8 @@
-import type { Course, CourseList } from '@/models/courses'
-import { DELETE, fetchApi, GET, POST, PUT } from './base'
+import type { Course, CourseDetails, CourseList } from '@/models/courses'
 import type { ErrorResponse } from '@/models/global'
+import { DELETE, fetchApi, GET, POST, PUT } from './base'
 
-async function addCourse(course: Course): Promise<Course | ErrorResponse> {
+async function addCourse(course: CourseDetails): Promise<Course | ErrorResponse> {
   try {
     const response = await fetchApi(POST('/courses', course))
 
@@ -18,7 +18,7 @@ async function addCourse(course: Course): Promise<Course | ErrorResponse> {
 }
 
 async function getCourses(
-  query: Object,
+  query: Record<string, string>,
   signal: AbortSignal,
 ): Promise<CourseList | ErrorResponse | null> {
   try {
@@ -52,7 +52,7 @@ async function getCourse(id: string): Promise<Course | ErrorResponse> {
   }
 }
 
-async function updateCourse(id: string, course: Course): Promise<Course | ErrorResponse> {
+async function updateCourse(id: string, course: CourseDetails): Promise<Course | ErrorResponse> {
   try {
     const response = await fetchApi(PUT('/courses/' + id, course))
 
@@ -80,4 +80,4 @@ async function deleteCourse(id: string): Promise<void | ErrorResponse> {
   }
 }
 
-export { addCourse, getCourses, getCourse, updateCourse, deleteCourse }
+export { addCourse, deleteCourse, getCourse, getCourses, updateCourse }

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { addStudent } from '@/helpers/api/students'
+import Header from '@/components/Header.vue'
 import Navbar from '@/components/Navbar.vue'
 import StudentForm from '@/components/StudentForm.vue'
-import { getMessage } from '@/helpers/utils'
-import type { Student } from '@/models/students'
+import SuccessToast from '@/components/SuccessToast.vue'
+import { addStudent } from '@/helpers/api/students'
+import { getMessage, isError } from '@/helpers/utils'
+import type { StudentDetails } from '@/models/students'
+import { Toast } from 'bootstrap'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Toast } from 'bootstrap'
-import SuccessToast from '@/components/SuccessToast.vue'
 
 /*<--------- ADD STUDENT --------->*/
 
@@ -15,15 +16,16 @@ const errorMessage = ref<string>('')
 const isLoading = ref<boolean>(false)
 const router = useRouter()
 
-async function createStudent(student: Student) {
+async function createStudent(student: StudentDetails) {
   isLoading.value = true
   const toast = document.getElementById('toast--add-student')
   const response = await addStudent(student)
 
-  if ('message' in response) {
+  if (isError(response)) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
-    else errorMessage.value = response.message as string
+    else errorMessage.value = response.message
 
+    isLoading.value = false
     return
   }
 
@@ -42,8 +44,7 @@ async function createStudent(student: Student) {
     <Navbar />
 
     <div class="container mt-5 text-center text-md-start">
-      <h2>Add New Student</h2>
-      <p>Please fill in the details below.</p>
+      <Header title="Add New Student" description="Please fill in the details below." type="Form" />
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 

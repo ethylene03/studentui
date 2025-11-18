@@ -55,7 +55,9 @@ function getPagination(current: number, total: number): string[] {
         style="cursor: pointer"
         :class="{ disabled: n === currentPage.toString() || n === '…' }"
       >
-        <span class="page-link text-primary" @click="$router.push({ query: { page: n } })">{{ n }}</span>
+        <span class="page-link text-primary" @click="$router.push({ query: { page: n } })">{{
+          n
+        }}</span>
       </li>
 
       <li class="page-item" style="cursor: pointer" :class="{ disabled: currentPage >= pages }">

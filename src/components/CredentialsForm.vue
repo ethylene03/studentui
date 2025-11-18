@@ -5,7 +5,7 @@ import { reactive } from 'vue'
 
 const { label, submitError, isLoading } = defineProps<{
   label: string
-  submitError?: string
+  submitError?: string | null
   isLoading: boolean
 }>()
 const emit = defineEmits<{ (event: 'onUserSubmit', value: UserCredentials): void }>()

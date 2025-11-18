@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import ActionBar from '@/components/ActionBar.vue'
+import DeleteModal from '@/components/DeleteModal.vue'
+import Header from '@/components/Header.vue'
+import Navbar from '@/components/Navbar.vue'
+import SuccessToast from '@/components/SuccessToast.vue'
+import Table from '@/components/Table.vue'
+import { deleteCourse, getCourses } from '@/helpers/api/courses'
+import { isError } from '@/helpers/utils'
 import type { Course } from '@/models/courses'
 import { Modal, Toast } from 'bootstrap'
 import { debounce } from 'lodash'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { deleteCourse, getCourses } from '@/helpers/api/courses'
-import ActionBar from '@/components/ActionBar.vue'
-import DeleteModal from '@/components/DeleteModal.vue'
-import Navbar from '@/components/Navbar.vue'
-import SuccessToast from '@/components/SuccessToast.vue'
-import Table from '@/components/Table.vue'
 
 onMounted(() => {
   fetchCourses()
@@ -36,7 +38,7 @@ async function fetchCourses(reset: boolean = false) {
 
   const response = await getCourses(getQuery(reset), controller.value.signal)
 
-  if (!response || 'message' in response) {
+  if (!response || isError(response)) {
     clearLoading()
     return
   }
@@ -65,14 +67,19 @@ const sortWith = ref<string>('')
 const sortBy = ref<string>('asc')
 const query = ref<string | null>(null)
 
-function getQuery(reset: boolean) {
+function getQuery(reset: boolean): Record<string, string> {
   let page = 0
   if (route.query.page && !reset) page = Number(route.query.page) - 1
 
   const sort = sortWith.value === '' ? 'id,asc' : `${sortWith.value},${sortBy.value}`
   const size = 7
 
-  return { page, size, sort, ...(query.value ? { name: query.value } : {}) }
+  return {
+    page: page.toString(),
+    size: size.toString(),
+    sort,
+    ...(query.value ? { name: query.value } : {}),
+  }
 }
 
 /*<--------- MANAGE LOADING STATE --------->*/
@@ -148,8 +155,11 @@ async function deleteItem() {
     <Navbar />
 
     <div class="container mt-5 text-center text-md-start">
-      <h2>Course Directory</h2>
-      <p class="lead text-primary">Total courses offered: {{ totalCount }}</p>
+      <Header
+        title="Course Directory"
+        :description="'Total courses offered: ' + totalCount"
+        type="Main"
+      />
       <ActionBar
         label="Course"
         :sortOptions="Object.keys(courses[0] || {})"

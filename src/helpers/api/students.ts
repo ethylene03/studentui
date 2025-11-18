@@ -1,8 +1,8 @@
-import type { Student, StudentList } from '@/models/students'
-import { DELETE, fetchApi, GET, POST, PUT } from './base'
 import type { ErrorResponse } from '@/models/global'
+import type { Student, StudentDetails, StudentList } from '@/models/students'
+import { DELETE, fetchApi, GET, POST, PUT } from './base'
 
-async function addStudent(student: Student): Promise<Student | ErrorResponse> {
+async function addStudent(student: StudentDetails): Promise<Student | ErrorResponse> {
   try {
     const response = await fetch(POST('/students', student))
 
@@ -18,7 +18,7 @@ async function addStudent(student: Student): Promise<Student | ErrorResponse> {
 }
 
 async function getStudents(
-  query: Object,
+  query: Record<string, string>,
   signal: AbortSignal,
 ): Promise<StudentList | ErrorResponse | null> {
   try {
@@ -52,7 +52,10 @@ async function getStudent(id: string): Promise<Student | ErrorResponse> {
   }
 }
 
-async function updateStudent(id: string, student: Student): Promise<Student | ErrorResponse> {
+async function updateStudent(
+  id: string,
+  student: StudentDetails,
+): Promise<Student | ErrorResponse> {
   try {
     const response = await fetchApi(PUT('/students/' + id, student))
 
@@ -80,4 +83,4 @@ async function deleteStudent(id: string): Promise<void | ErrorResponse> {
   }
 }
 
-export { addStudent, getStudents, getStudent, updateStudent, deleteStudent }
+export { addStudent, deleteStudent, getStudent, getStudents, updateStudent }

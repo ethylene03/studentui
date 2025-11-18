@@ -1,3 +1,5 @@
+import type { ErrorResponse } from '@/models/global'
+
 function camelToTitle(str: string): string {
   return str
     .replace(/([A-Z])/g, ' $1')
@@ -17,4 +19,8 @@ function getPath() {
   return window.location.pathname.replace(/\//g, '')
 }
 
-export { camelToTitle, getMessage, getPath }
+function isError(obj: Object): obj is ErrorResponse {
+  return Object.keys(obj).includes('message')
+}
+
+export { camelToTitle, getMessage, getPath, isError }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { signup } from '@/helpers/api/authorization'
 import CredentialsForm from '@/components/CredentialsForm.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
-import { getMessage } from '@/helpers/utils'
+import { signup } from '@/helpers/api/authorization'
+import { getMessage, isError } from '@/helpers/utils'
 import type { UserCredentials } from '@/models/users'
 import { Toast } from 'bootstrap'
 import { ref } from 'vue'
@@ -10,7 +10,7 @@ import { useRouter } from 'vue-router'
 
 /*<--------- USER SIGNUP --------->*/
 
-const errorMessage = ref<string | undefined>(undefined)
+const errorMessage = ref<string | null>(null)
 const isLoading = ref<boolean>(false)
 const router = useRouter()
 
@@ -19,7 +19,7 @@ async function signupUser(credentials: UserCredentials) {
 
   const toast = document.getElementById('toast--signup')
   const response = await signup(credentials)
-  if ('message' in response) {
+  if (isError(response)) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
     else errorMessage.value = response.message
 

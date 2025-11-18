@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { logout } from '@/helpers/api/authorization'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
+import { Toast } from 'bootstrap'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Toast } from 'bootstrap'
 import SuccessToast from './SuccessToast.vue'
 
 const router = useRouter()

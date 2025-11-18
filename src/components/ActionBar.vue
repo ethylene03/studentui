@@ -44,14 +44,16 @@ function searchText() {
     </button>
 
     <div>
-      <div class="input-group w-auto mb-3 border border-primary bg-white rounded-3">
+      <div class="input-group mb-3 border border-primary bg-white rounded-3">
         <input
           id="searchInput"
           type="text"
           class="form-control rounded-3 border-0 bg-transparent"
           v-model="query"
           :placeholder="'Search ' + label + '...'"
+          aria-label="Search Input"
         />
+
         <button
           id="search--button"
           class="input-group-text bg-transparent border-0 text-primary cursor-pointer"
@@ -62,16 +64,17 @@ function searchText() {
         </button>
       </div>
 
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3 w-100">
         <label for="sortWith" class="text-nowrap mb-0">Sort By:</label>
         <select id="sortWith" v-model="sortWith" class="form-select border border-primary">
           <option value="" hidden>Sort by..</option>
           <template v-for="option in sortOptions" :key="option">
             <option v-if="option !== 'id'" :value="option">
-              {{ camelToTitle(option as string) }}
+              {{ camelToTitle(option) }}
             </option>
           </template>
         </select>
+
         <button
           class="btn text-primary border border-primary bg-white"
           @click="onClickSort"

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { getStudent, updateStudent } from '@/helpers/api/students'
+import Header from '@/components/Header.vue'
 import Navbar from '@/components/Navbar.vue'
 import NoData from '@/components/NoData.vue'
 import Spinner from '@/components/Spinner.vue'
 import StudentForm from '@/components/StudentForm.vue'
-import { getMessage } from '@/helpers/utils'
-import type { Student } from '@/models/students'
+import SuccessToast from '@/components/SuccessToast.vue'
+import { getStudent, updateStudent } from '@/helpers/api/students'
+import { getMessage, isError } from '@/helpers/utils'
+import type { Student, StudentDetails } from '@/models/students'
+import { Toast } from 'bootstrap'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Toast } from 'bootstrap'
-import SuccessToast from '@/components/SuccessToast.vue'
 
 onMounted(() => {
   fetchStudent()
@@ -30,9 +31,9 @@ async function fetchStudent() {
 
   const routeID = route.params.id as string
   const response = await getStudent(routeID)
-  if ('message' in response) {
+  if (isError(response)) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
-    else errorMessage.value = response.message as string
+    else errorMessage.value = response.message
 
     isLoading.value = false
     return
@@ -46,14 +47,15 @@ async function fetchStudent() {
 /*<--------- EDIT STUDENT --------->*/
 
 const editLoading = ref<boolean>(false)
-async function editStudent(student: Student) {
+async function editStudent(student: StudentDetails) {
   editLoading.value = true
   const toast = document.getElementById('toast--edit-student')
   const response = await updateStudent(id.value, student)
-  if ('message' in response) {
+  if (isError(response)) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
-    else errorMessage.value = response.message as string
+    else errorMessage.value = response.message
 
+    editLoading.value = false
     return
   }
 
@@ -72,8 +74,11 @@ async function editStudent(student: Student) {
     <Navbar />
 
     <div class="container mt-5 text-center text-md-start">
-      <h2>Edit Student Details</h2>
-      <p>Please fill in the details below.</p>
+      <Header
+        title="Edit Student Details"
+        description="Please fill in the details below."
+        type="Form"
+      />
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 

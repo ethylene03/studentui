@@ -21,8 +21,8 @@ function POST(url: string, data: Object) {
   })
 }
 
-function GET(url: string, query?: Object, signal?: AbortSignal) {
-  const params = query ? new URLSearchParams(query as Record<string, string>).toString() : null
+function GET(url: string, query?: Record<string, string>, signal?: AbortSignal) {
+  const params = query ? new URLSearchParams(query).toString() : null
   return new Request(baseUrl + url + (params ? '?' + params : ''), {
     method: 'GET',
     headers: getHeaders(),
@@ -60,4 +60,4 @@ async function fetchApi(request: Request) {
   return response
 }
 
-export { fetchApi, POST, GET, PUT, DELETE }
+export { DELETE, fetchApi, GET, POST, PUT }

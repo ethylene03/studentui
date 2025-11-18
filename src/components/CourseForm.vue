@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { validateCourseName } from '@/helpers/validation/courses'
-import type { Course } from '@/models/courses'
+import type { CourseDetails } from '@/models/courses'
 import { reactive } from 'vue'
 
-const props = defineProps<{ course?: Partial<Course>; isLoading: boolean }>()
-const course = reactive<Course>({
-  id: undefined,
+const props = defineProps<{ course?: CourseDetails; isLoading: boolean }>()
+const course = reactive<CourseDetails>({
   name: '',
   ...props.course,
 })
 
 let errors = reactive<string[]>([])
 const emit = defineEmits<{
-  (event: 'formData', value: Course): void
+  (event: 'formData', value: CourseDetails): void
 }>()
 
 function submitCourse() {

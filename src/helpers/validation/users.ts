@@ -39,4 +39,4 @@ function validatePassword(input: string): ValidationError {
   } as ValidationError
 }
 
-export { validateUsername, validatePassword }
+export { validatePassword, validateUsername }
