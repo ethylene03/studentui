@@ -21,9 +21,23 @@ export const useCoursesStore = defineStore('courses', {
     },
 
     set(key: string, newList: CourseList) {
+      this.pruneStaleCache()
       this.cache[key] = {
         courses: newList,
         lastFetched: Date.now(),
+      }
+    },
+
+    pruneStaleCache() {
+      const STALE_TIME = 1000 * 60 * 5
+      const now = Date.now()
+
+      for (const key in this.cache) {
+        const entry = this.cache[key]
+
+        if (entry && now - entry.lastFetched > STALE_TIME) {
+          delete this.cache[key]
+        }
       }
     },
   },
