@@ -23,4 +23,12 @@ function isError(obj: Object): obj is ErrorResponse {
   return Object.keys(obj).includes('message')
 }
 
-export { camelToTitle, getMessage, getPath, isError }
+function buildCacheKey(query: Record<string, string>): string {
+  return Object.entries(query)
+    .map(([key, value]) => {
+      return `${key}=${value}`
+    })
+    .join('|')
+}
+
+export { camelToTitle, getMessage, getPath, isError, buildCacheKey }

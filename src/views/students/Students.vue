@@ -6,8 +6,9 @@ import Navbar from '@/components/Navbar.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import Table from '@/components/Table.vue'
 import { deleteStudent, getStudents } from '@/helpers/api/students'
-import { isError } from '@/helpers/utils'
-import type { Student } from '@/models/students'
+import { useStudentsStore } from '@/helpers/stores/students'
+import { buildCacheKey, isError } from '@/helpers/utils'
+import type { Student, StudentList } from '@/models/students'
 import { Modal, Toast } from 'bootstrap'
 import { debounce } from 'lodash'
 import { onMounted, ref, watch } from 'vue'
@@ -36,8 +37,11 @@ async function fetchStudents(reset: boolean = false) {
   if (controller.value) controller.value.abort()
   controller.value = new AbortController()
 
-  const response = await getStudents(getQuery(reset), controller.value.signal)
+  const query = getQuery(reset)
+  const cache = useStudentsStore()
+  getCache(query, cache)
 
+  const response = await getStudents(query, controller.value.signal)
   if (!response || isError(response)) {
     clearLoading()
     return
@@ -47,7 +51,23 @@ async function fetchStudents(reset: boolean = false) {
   pages.value = response.pages
   students.value = response.data
 
+  const cacheKey = buildCacheKey(query)
+  cache.set(cacheKey, response)
+
   clearLoading()
+}
+
+function getCache(query: Record<string, string>, cache: ReturnType<typeof useStudentsStore>) {
+  const cacheKey = buildCacheKey(query)
+  const cachedList = cache.get(cacheKey)
+
+  if (cachedList) {
+    totalCount.value = cachedList.total
+    pages.value = cachedList.pages
+    students.value = cachedList.data
+
+    clearLoading()
+  }
 }
 
 watch(
