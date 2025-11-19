@@ -5,44 +5,59 @@ import Header from '@/components/Header.vue'
 import Navbar from '@/components/Navbar.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import Table from '@/components/Table.vue'
-import { deleteStudent, getStudents } from '@/helpers/api/students'
-import { useStudentsStore } from '@/helpers/stores/students'
-import { buildCacheKey, isError } from '@/helpers/utils'
+import { useBuildQuery } from '@/helpers/composables/buildQuery'
+import { useDeleteItem } from '@/helpers/composables/deleteItem'
+import { useFetchData } from '@/helpers/composables/fetchData'
+import { useLoadingState } from '@/helpers/composables/loadingState'
+import { buildCacheKey } from '@/helpers/utils'
 import type { Student, StudentList } from '@/models/students'
-import { Modal, Toast } from 'bootstrap'
 import { debounce } from 'lodash'
 import { onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 onMounted(() => {
-  fetchStudents()
+  load()
   debouncedFetch.value = debounce(() => {
-    fetchStudents(true)
+    load(true)
   }, 500)
 })
 
 const route = useRoute()
-const router = useRouter()
 
-/*<--------- FETCH STUDENTS --------->*/
+/*<--------- COMPOSABLES --------->*/
 
+const { fetchData: fetchStudents, fetchCachedData: fetchCachedStudents } =
+  useFetchData<StudentList>('student')
+const { sortWith, sortBy, search, getQuery, onClickSort } = useBuildQuery('student')
+const { showDeleteModal, deleteItem } = useDeleteItem('student')
+const { isLoading, setLoading, clearLoading } = useLoadingState()
+
+/*<--------- DATA --------->*/
+
+const debouncedFetch = ref<((query: string) => void) | null>(null)
 const totalCount = ref<number>(0)
 const pages = ref<number>(0)
 const students = ref<Student[]>([])
-const controller = ref<AbortController | null>(null)
 
-async function fetchStudents(reset: boolean = false) {
+/*<--------- LOAD STUDENTS --------->*/
+
+async function load(reset: boolean = false) {
   setLoading()
-
-  if (controller.value) controller.value.abort()
-  controller.value = new AbortController()
-
   const query = getQuery(reset)
-  const cache = useStudentsStore()
-  getCache(query, cache)
 
-  const response = await getStudents(query, controller.value.signal)
-  if (!response || isError(response)) {
+  const cacheKey = buildCacheKey(query)
+  const cachedData = fetchCachedStudents(cacheKey)
+
+  if (cachedData) {
+    totalCount.value = search.value ? totalCount.value : cachedData.total
+    pages.value = cachedData.pages
+    students.value = cachedData.data
+
+    clearLoading()
+  }
+
+  const response = await fetchStudents(query)
+  if (!response) {
     clearLoading()
     return
   }
@@ -51,120 +66,39 @@ async function fetchStudents(reset: boolean = false) {
   pages.value = response.pages
   students.value = response.data
 
-  const cacheKey = buildCacheKey(query)
-  cache.set(cacheKey, response)
-
   clearLoading()
-}
-
-function getCache(query: Record<string, string>, cache: ReturnType<typeof useStudentsStore>) {
-  const cacheKey = buildCacheKey(query)
-  const cachedList = cache.get(cacheKey)
-
-  if (cachedList) {
-    totalCount.value = cachedList.total
-    pages.value = cachedList.pages
-    students.value = cachedList.data
-
-    clearLoading()
-  }
-}
-
-watch(
-  () => route.query.page,
-  () => {
-    fetchStudents()
-  },
-)
-
-/*<--------- GET QUERY DETAILS --------->*/
-
-const sortWith = ref<string>('')
-const sortBy = ref<string>('asc')
-const search = ref<string | null>(null)
-
-function getQuery(reset: boolean): Record<string, string> {
-  let page = 0
-  if (route.query.page && !reset) page = Number(route.query.page) - 1
-
-  const sort = sortWith.value === '' ? 'id,asc' : `${sortWith.value},${sortBy.value}`
-  const size = 7
-
-  return {
-    page: page.toString(),
-    size: size.toString(),
-    sort,
-    ...(search.value ? { query: search.value } : {}),
-  }
-}
-
-/*<--------- MANAGE LOADING STATE --------->*/
-
-const timeoutID = ref<number | null>(null)
-const isLoading = ref<boolean>(false)
-
-function setLoading() {
-  timeoutID.value = window.setTimeout(() => {
-    isLoading.value = true
-  }, 300)
-}
-
-function clearLoading() {
-  clearTimeout(timeoutID.value!)
-  isLoading.value = false
-}
-
-/*<--------- DEBOUNCING FETCH --------->*/
-
-const debouncedFetch = ref<((query: string) => void) | null>(null)
-
-watch(search, () => {
-  debouncedFetch.value?.(search.value || '')
-})
-
-/*<--------- HANDLE SORTING --------->*/
-
-watch(sortWith, () => {
-  sortBy.value = 'asc'
-  fetchStudents()
-})
-
-function onClickSort() {
-  sortBy.value = sortBy.value === 'asc' ? 'desc' : 'asc'
-  fetchStudents()
 }
 
 /*<--------- DELETE STUDENT --------->*/
 
-const toDeleteId = ref<string>('')
+async function onDeleteItem() {
+  await deleteItem()
 
-function showDeleteModal(id: string) {
-  toDeleteId.value = id
-
-  const modal = document.getElementById('modal--delete')
-  if (modal) {
-    const modalInstance = new Modal(modal as HTMLElement)
-    modalInstance.show()
-  }
+  totalCount.value -= 1
+  load(true)
 }
 
-async function deleteItem() {
-  if (!toDeleteId) return
-  const toast = document.getElementById('toast--delete-student')
-  const modal = document.getElementById('modal--delete')
+/*<--------- WATCHERS --------->*/
 
-  const response = await deleteStudent(toDeleteId.value)
-  if (!response) {
-    const modalInstance = Modal.getInstance(modal as HTMLElement)
-    modalInstance?.hide()
+watch(
+  () => route.query.page,
+  () => {
+    load()
+  },
+)
 
-    const toastInstance = new Toast(toast as HTMLElement)
-    toastInstance.show()
+watch(sortWith, () => {
+  sortBy.value = 'asc'
+  load()
+})
 
-    totalCount.value -= 1
-    fetchStudents(true)
-  }
-}
+watch(sortBy, () => {
+  load()
+})
+
+watch(search, () => {
+  debouncedFetch.value?.(search.value || '')
+})
 </script>
 
 <template>
@@ -188,7 +122,7 @@ async function deleteItem() {
 
     <Table :data="students" :pages="pages" @deleteItem="showDeleteModal" :isLoading="isLoading" />
 
-    <SuccessToast id="toast--delete-student" message="Student deleted successfully!" />
-    <DeleteModal @delete="deleteItem" />
+    <SuccessToast id="toast--delete" message="Student deleted successfully!" />
+    <DeleteModal @delete="onDeleteItem" />
   </section>
 </template>
