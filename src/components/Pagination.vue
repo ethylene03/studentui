@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-
-const { pages } = defineProps<{ pages: number }>()
-const route = useRoute()
-
-const currentPage = computed(() => {
-  return parseInt(route.query.page as string) || 1
-})
+const { pages, current } = defineProps<{ pages: number; current: number }>()
 
 function getPagination(current: number, total: number): string[] {
   const pages: string[] = []
@@ -28,6 +20,12 @@ function getPagination(current: number, total: number): string[] {
   }
   return pages
 }
+
+const emit = defineEmits<{ (event: 'onChangePage', value: number): void }>()
+function changePage(page: string) {
+  if (page === '…') return
+  emit('onChangePage', parseInt(page))
+}
 </script>
 
 <template>
@@ -37,11 +35,8 @@ function getPagination(current: number, total: number): string[] {
     v-if="pages > 1"
   >
     <ul class="pagination mb-0">
-      <li class="page-item" style="cursor: pointer" :class="{ disabled: currentPage <= 1 }">
-        <span
-          class="page-link text-primary"
-          @click="$router.push({ query: { page: currentPage - 1 } })"
-        >
+      <li class="page-item" style="cursor: pointer" :class="{ disabled: current <= 1 }">
+        <span class="page-link text-primary" @click="changePage((current - 1).toString())">
           <span aria-hidden="true">
             <i class="fas fa-angle-left"></i>
           </span>
@@ -49,22 +44,19 @@ function getPagination(current: number, total: number): string[] {
       </li>
 
       <li
-        v-for="n in getPagination(currentPage, pages)"
+        v-for="n in getPagination(current, pages)"
         :key="n"
         class="page-item"
         style="cursor: pointer"
-        :class="{ disabled: n === currentPage.toString() || n === '…' }"
+        :class="{ disabled: n === current.toString() || n === '…' }"
       >
-        <span class="page-link text-primary" @click="$router.push({ query: { page: n } })">{{
-          n
-        }}</span>
+        <span class="page-link text-primary" @click="changePage(n)">
+          {{ n }}
+        </span>
       </li>
 
-      <li class="page-item" style="cursor: pointer" :class="{ disabled: currentPage >= pages }">
-        <span
-          class="page-link text-primary"
-          @click="$router.push({ query: { page: currentPage + 1 } })"
-        >
+      <li class="page-item" style="cursor: pointer" :class="{ disabled: current >= pages }">
+        <span class="page-link text-primary" @click="changePage((current + 1).toString())">
           <span aria-hidden="true">
             <i class="fas fa-angle-right"></i>
           </span>

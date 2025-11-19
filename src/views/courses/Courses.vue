@@ -18,7 +18,8 @@ import { useRoute } from 'vue-router'
 onMounted(() => {
   load()
   debouncedFetch.value = debounce(() => {
-    load(true)
+    currentPage.value = 1
+    load()
   }, 500)
 })
 
@@ -29,6 +30,7 @@ const route = useRoute()
 const debouncedFetch = ref<((search: string) => void) | null>(null)
 const totalCount = ref<number>(0)
 const pages = ref<number>(0)
+const currentPage = ref<number>(1)
 const courses = ref<Course[]>([])
 
 /*<--------- COMPOSABLES --------->*/
@@ -41,9 +43,9 @@ const { isLoading, setLoading, clearLoading } = useLoadingState()
 
 /*<--------- LOAD COURSES --------->*/
 
-async function load(reset = false) {
+async function load() {
   setLoading()
-  const query = getQuery(reset)
+  const query = getQuery(currentPage.value)
 
   const cacheKey = buildCacheKey(query)
   const cachedData = fetchCachedCourses(cacheKey)
@@ -75,7 +77,7 @@ async function onDeleteItem() {
   await deleteItem()
 
   totalCount.value -= 1
-  load(true)
+  load()
 }
 
 /*<--------- WATCHERS --------->*/
@@ -92,7 +94,7 @@ watch(sortWith, () => {
   load()
 })
 
-watch(sortBy, () => {
+watch([sortBy, currentPage], () => {
   load()
 })
 
@@ -120,7 +122,14 @@ watch(search, () => {
       />
     </div>
 
-    <Table :data="courses" :pages="pages" @deleteItem="showDeleteModal" :isLoading="isLoading" />
+    <Table
+      :data="courses"
+      :pages="pages"
+      :currentPage="currentPage"
+      @onChangePage="(e) => (currentPage = e)"
+      @deleteItem="showDeleteModal"
+      :isLoading="isLoading"
+    />
 
     <SuccessToast id="toast--delete" message="Course deleted successfully!" />
     <DeleteModal @delete="onDeleteItem" />

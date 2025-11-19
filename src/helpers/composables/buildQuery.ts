@@ -8,14 +8,11 @@ export function useBuildQuery(type: 'course' | 'student') {
   const sortBy = ref<string>('asc')
   const search = ref<string | null>(null)
 
-  function getQuery(reset: boolean = false): Record<string, string> {
-    let page = 0
-    if (route.query.page && !reset) page = Number(route.query.page) - 1
-
+  function getQuery(currentPage: number = 1): Record<string, string> {
     const sort = sortWith.value === '' ? 'id,asc' : `${sortWith.value},${sortBy.value}`
 
     return {
-      page: page.toString(),
+      page: (currentPage - 1).toString(),
       size: '7',
       sort,
       ...(search.value ? { [type === 'student' ? 'query' : 'name']: search.value } : {}),

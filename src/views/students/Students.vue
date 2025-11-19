@@ -18,11 +18,20 @@ import { useRoute } from 'vue-router'
 onMounted(() => {
   load()
   debouncedFetch.value = debounce(() => {
-    load(true)
+    currentPage.value = 1
+    load()
   }, 500)
 })
 
 const route = useRoute()
+
+/*<--------- DATA --------->*/
+
+const debouncedFetch = ref<((query: string) => void) | null>(null)
+const totalCount = ref<number>(0)
+const pages = ref<number>(0)
+const currentPage = ref<number>(1)
+const students = ref<Student[]>([])
 
 /*<--------- COMPOSABLES --------->*/
 
@@ -32,18 +41,11 @@ const { sortWith, sortBy, search, getQuery, onClickSort } = useBuildQuery('stude
 const { showDeleteModal, deleteItem } = useDeleteItem('student')
 const { isLoading, setLoading, clearLoading } = useLoadingState()
 
-/*<--------- DATA --------->*/
-
-const debouncedFetch = ref<((query: string) => void) | null>(null)
-const totalCount = ref<number>(0)
-const pages = ref<number>(0)
-const students = ref<Student[]>([])
-
 /*<--------- LOAD STUDENTS --------->*/
 
-async function load(reset: boolean = false) {
+async function load() {
   setLoading()
-  const query = getQuery(reset)
+  const query = getQuery(currentPage.value)
 
   const cacheKey = buildCacheKey(query)
   const cachedData = fetchCachedStudents(cacheKey)
@@ -75,7 +77,7 @@ async function onDeleteItem() {
   await deleteItem()
 
   totalCount.value -= 1
-  load(true)
+  load()
 }
 
 /*<--------- WATCHERS --------->*/
@@ -92,7 +94,7 @@ watch(sortWith, () => {
   load()
 })
 
-watch(sortBy, () => {
+watch([sortBy, currentPage], () => {
   load()
 })
 
@@ -120,7 +122,14 @@ watch(search, () => {
       />
     </div>
 
-    <Table :data="students" :pages="pages" @deleteItem="showDeleteModal" :isLoading="isLoading" />
+    <Table
+      :data="students"
+      :pages="pages"
+      :currentPage="currentPage"
+      @onChangePage="(e) => (currentPage = e)"
+      @deleteItem="showDeleteModal"
+      :isLoading="isLoading"
+    />
 
     <SuccessToast id="toast--delete" message="Student deleted successfully!" />
     <DeleteModal @delete="onDeleteItem" />

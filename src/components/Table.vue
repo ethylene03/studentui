@@ -15,13 +15,17 @@ onMounted(() => {
   }, 300)
 })
 
-const { data, pages, isLoading } = defineProps<{
+const { data, pages, isLoading, currentPage } = defineProps<{
   data: Array<Student | Course>
   pages: number
   isLoading: boolean
+  currentPage: number
 }>()
 
-const emit = defineEmits<{ (event: 'deleteItem', value: string): void }>()
+const emit = defineEmits<{
+  (event: 'deleteItem', value: string): void
+  (event: 'onChangePage', value: number): void
+}>()
 const router = useRouter()
 
 function handleAction(item: Student | Course, action: string) {
@@ -82,6 +86,11 @@ function handleAction(item: Student | Course, action: string) {
         </tbody>
       </table>
     </div>
-    <Pagination v-if="!isLoading && dataLoaded" :pages="pages" />
+    <Pagination
+      v-if="!isLoading && dataLoaded"
+      :pages="pages"
+      :current="currentPage"
+      @on-change-page="(e) => $emit('onChangePage', e)"
+    />
   </section>
 </template>
