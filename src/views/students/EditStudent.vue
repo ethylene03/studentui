@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
-import Navbar from '@/components/Navbar.vue'
+import DataSpinner from '@/components/DataSpinner.vue'
+import NavBar from '@/components/NavBar.vue'
 import NoData from '@/components/NoData.vue'
-import Spinner from '@/components/Spinner.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import StudentForm from '@/components/StudentForm.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import { getStudent, updateStudent } from '@/helpers/api/students'
@@ -71,10 +71,10 @@ async function editStudent(student: StudentDetails) {
 
 <template>
   <section id="add-students" class="w-100 d-flex flex-column">
-    <Navbar />
+    <nav-bar />
 
     <div class="container mt-5 text-center text-md-start">
-      <Header
+      <page-header
         title="Edit Student Details"
         description="Please fill in the details below."
         type="Form"
@@ -83,11 +83,11 @@ async function editStudent(student: StudentDetails) {
     </div>
 
     <div v-if="isLoading || !student" class="container bg-white rounded-3 my-5">
-      <Spinner v-if="isLoading" />
-      <NoData v-else-if="!isLoading && !student" message="Student not found." />
+      <data-spinner v-if="isLoading" />
+      <no-data v-else-if="!isLoading && !student" message="Student not found." />
     </div>
 
-    <StudentForm v-else :student="student" @formData="editStudent" :isLoading="editLoading" />
-    <SuccessToast id="toast--edit-student" message="Student updated successfully!" />
+    <student-form v-else :student="student" @form-data="editStudent" :is-loading="editLoading" />
+    <success-toast id="toast--edit-student" message="Student updated successfully!" />
   </section>
 </template>

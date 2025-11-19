@@ -2,22 +2,22 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import { refreshToken } from '@/helpers/api/authorization'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
-import Login from '@/views/authorization/Login.vue'
-import Signup from '@/views/authorization/Signup.vue'
+import LogIn from '@/views/authorization/LogIn.vue'
+import SignUp from '@/views/authorization/SignUp.vue'
 import AddCourse from '@/views/courses/AddCourse.vue'
-import Courses from '@/views/courses/Courses.vue'
 import EditCourse from '@/views/courses/EditCourse.vue'
+import ViewCourses from '@/views/courses/ViewCourses.vue'
+import NotFound from '@/views/NotFound.vue'
 import AddStudent from '@/views/students/AddStudent.vue'
 import EditStudent from '@/views/students/EditStudent.vue'
-import Students from '@/views/students/Students.vue'
-import NotFound from '@/views/NotFound.vue'
+import ViewStudents from '@/views/students/ViewStudents.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'Login', component: Login },
-    { path: '/signup', name: 'Signup', component: Signup },
-    { path: '/students', name: 'Students', component: Students, meta: { requiresAuth: true } },
+    { path: '/', name: 'Login', component: LogIn },
+    { path: '/signup', name: 'Signup', component: SignUp },
+    { path: '/students', name: 'Students', component: ViewStudents, meta: { requiresAuth: true } },
     {
       path: '/students/add',
       name: 'AddStudent',
@@ -30,7 +30,7 @@ const router = createRouter({
       component: EditStudent,
       meta: { requiresAuth: true },
     },
-    { path: '/courses', name: 'Courses', component: Courses, meta: { requiresAuth: true } },
+    { path: '/courses', name: 'Courses', component: ViewCourses, meta: { requiresAuth: true } },
     { path: '/courses/add', name: 'AddCourse', component: AddCourse, meta: { requiresAuth: true } },
     {
       path: '/courses/:id/edit',
@@ -38,7 +38,12 @@ const router = createRouter({
       component: EditCourse,
       meta: { requiresAuth: true },
     },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, meta: { requiresAuth: true } },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound,
+      meta: { requiresAuth: true },
+    },
   ],
 })
 

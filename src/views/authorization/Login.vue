@@ -45,11 +45,11 @@ async function loginUser(credentials: UserCredentials) {
   <section id="login" class="d-flex flex-column justify-content-center vh-100">
     <h3>Student Management System</h3>
     <h5 class="text-center">Login</h5>
-    <CredentialsForm
+    <credentials-form
       label="Login"
-      :isLoading="isLoading"
-      :submitError="errorMessage"
-      @onUserSubmit="loginUser"
+      :is-loading="isLoading"
+      :submit-error="errorMessage"
+      @on-user-submit="loginUser"
     />
 
     <div class="mt-3 text-center">
@@ -57,6 +57,6 @@ async function loginUser(credentials: UserCredentials) {
       <span class="mt-3 text-center btn--link" @click="$router.push('/signup')">Sign up</span>
     </div>
 
-    <SuccessToast id="toast--login" message="Login successful!" />
+    <success-toast id="toast--login" message="Login successful!" />
   </section>
 </template>

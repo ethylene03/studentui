@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CourseForm from '@/components/CourseForm.vue'
-import Header from '@/components/Header.vue'
-import Navbar from '@/components/Navbar.vue'
+import NavBar from '@/components/NavBar.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import { addCourse } from '@/helpers/api/courses'
 import { getMessage, isError } from '@/helpers/utils'
@@ -41,14 +41,18 @@ async function createCourse(course: CourseDetails) {
 
 <template>
   <section id="add-courses" class="w-100 d-flex flex-column">
-    <Navbar />
+    <nav-bar />
 
     <div class="container mt-5 text-center text-md-start">
-      <Header title="Add New Course" description="Please fill in the details below." type="Form" />
+      <page-header
+        title="Add New Course"
+        description="Please fill in the details below."
+        type="Form"
+      />
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <CourseForm @formData="createCourse" :isLoading="isLoading" />
-    <SuccessToast id="toast--add-course" message="Course added successfully!" />
+    <course-form @form-data="createCourse" :is-loading="isLoading" />
+    <success-toast id="toast--add-course" message="Course added successfully!" />
   </section>
 </template>

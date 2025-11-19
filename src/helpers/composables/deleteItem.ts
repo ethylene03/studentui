@@ -17,7 +17,7 @@ export function useDeleteItem(type: 'course' | 'student') {
   }
 
   async function deleteItem() {
-    if (!toDeleteId) return
+    if (!toDeleteId.value) return
     const toast = document.getElementById('toast--delete')
     const modal = document.getElementById('modal--delete')
 

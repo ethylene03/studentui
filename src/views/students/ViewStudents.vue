@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import ActionBar from '@/components/ActionBar.vue'
+import DataTable from '@/components/DataTable.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
-import Header from '@/components/Header.vue'
-import Navbar from '@/components/Navbar.vue'
+import NavBar from '@/components/NavBar.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
-import Table from '@/components/Table.vue'
 import { useBuildQuery } from '@/helpers/composables/buildQuery'
 import { useDeleteItem } from '@/helpers/composables/deleteItem'
 import { useFetchData } from '@/helpers/composables/fetchData'
 import { useLoadingState } from '@/helpers/composables/loadingState'
 import { buildCacheKey } from '@/helpers/utils'
-import type { Course, CourseList } from '@/models/courses'
+import type { Student, StudentList } from '@/models/students'
 import { debounce } from 'lodash'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -27,51 +27,51 @@ const route = useRoute()
 
 /*<--------- DATA --------->*/
 
-const debouncedFetch = ref<((search: string) => void) | null>(null)
+const debouncedFetch = ref<((query: string) => void) | null>(null)
 const totalCount = ref<number>(0)
 const pages = ref<number>(0)
 const currentPage = ref<number>(1)
-const courses = ref<Course[]>([])
+const students = ref<Student[]>([])
 
 /*<--------- COMPOSABLES --------->*/
 
-const { fetchData: fetchCourses, fetchCachedData: fetchCachedCourses } =
-  useFetchData<CourseList>('course')
-const { sortWith, sortBy, search, getQuery, onClickSort } = useBuildQuery('course')
-const { showDeleteModal, deleteItem } = useDeleteItem('course')
+const { fetchData: fetchStudents, fetchCachedData: fetchCachedStudents } =
+  useFetchData<StudentList>('student')
+const { sortWith, sortBy, search, getQuery, onClickSort } = useBuildQuery('student')
+const { showDeleteModal, deleteItem } = useDeleteItem('student')
 const { isLoading, setLoading, clearLoading } = useLoadingState()
 
-/*<--------- LOAD COURSES --------->*/
+/*<--------- LOAD STUDENTS --------->*/
 
 async function load() {
   setLoading()
   const query = getQuery(currentPage.value)
 
   const cacheKey = buildCacheKey(query)
-  const cachedData = fetchCachedCourses(cacheKey)
+  const cachedData = fetchCachedStudents(cacheKey)
 
   if (cachedData) {
-    courses.value = cachedData.data
     totalCount.value = search.value ? totalCount.value : cachedData.total
     pages.value = cachedData.pages
+    students.value = cachedData.data
 
     clearLoading()
   }
 
-  const response = await fetchCourses(query)
+  const response = await fetchStudents(query)
   if (!response) {
     clearLoading()
     return
   }
 
-  courses.value = response.data
   totalCount.value = search.value ? totalCount.value : response.total
   pages.value = response.pages
+  students.value = response.data
 
   clearLoading()
 }
 
-/*<--------- DELETE COURSE --------->*/
+/*<--------- DELETE STUDENT --------->*/
 
 async function onDeleteItem() {
   await deleteItem()
@@ -104,34 +104,34 @@ watch(search, () => {
 </script>
 
 <template>
-  <section id="courses" class="w-100">
-    <Navbar />
+  <section id="students" class="w-100">
+    <nav-bar />
 
     <div class="container mt-5 text-center text-md-start">
-      <Header
-        title="Course Directory"
-        :description="'Total courses offered: ' + totalCount"
+      <page-header
+        title="Student Directory"
+        :description="'Total students enrolled: ' + totalCount"
         type="Main"
       />
-      <ActionBar
-        label="Course"
-        :sortOptions="Object.keys(courses[0] || {})"
-        @onSearchText="search = $event"
-        @onClickSortBy="onClickSort"
-        @onChangeSortWith="sortWith = $event"
+      <action-bar
+        label="Student"
+        :sort-options="Object.keys(students[0] || {})"
+        @on-search-text="search = $event"
+        @on-click-sort-by="onClickSort"
+        @on-change-sort-with="sortWith = $event"
       />
     </div>
 
-    <Table
-      :data="courses"
+    <data-table
+      :data="students"
       :pages="pages"
-      :currentPage="currentPage"
-      @onChangePage="(e) => (currentPage = e)"
-      @deleteItem="showDeleteModal"
-      :isLoading="isLoading"
+      :current-page="currentPage"
+      @on-change-page="(e) => (currentPage = e)"
+      @delete-item="showDeleteModal"
+      :is-loading="isLoading"
     />
 
-    <SuccessToast id="toast--delete" message="Course deleted successfully!" />
-    <DeleteModal @delete="onDeleteItem" />
+    <success-toast id="toast--delete" message="Student deleted successfully!" />
+    <delete-modal @delete="onDeleteItem" />
   </section>
 </template>

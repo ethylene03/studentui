@@ -1,5 +1,7 @@
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import { refreshToken } from './authorization'
+import type { StudentDetails } from '@/models/students'
+import type { CourseDetails } from '@/models/courses'
 
 const baseUrl = 'http://localhost:8080'
 
@@ -13,7 +15,7 @@ function getHeaders() {
   })
 }
 
-function POST(url: string, data: Object) {
+function POST(url: string, data: StudentDetails | CourseDetails) {
   return new Request(baseUrl + url, {
     method: 'POST',
     headers: getHeaders(),
@@ -30,7 +32,7 @@ function GET(url: string, query?: Record<string, string>, signal?: AbortSignal) 
   })
 }
 
-function PUT(url: string, data: Object) {
+function PUT(url: string, data: StudentDetails | CourseDetails) {
   return new Request(baseUrl + url, {
     method: 'PUT',
     headers: getHeaders(),
@@ -45,18 +47,19 @@ function DELETE(url: string) {
   })
 }
 
-async function fetchApi(request: Request) {
+async function fetchApi(request: Request): Promise<Response> {
   const response = await fetch(request)
 
   if (response.status === 403) {
     const auth = useAuthorizationStore()
     const newToken = await refreshToken()
 
-    if (!newToken) return
-    auth.setToken(newToken.token)
+    if (newToken) {
+      auth.setToken(newToken.token)
 
-    request.headers.set('Authorization', `Bearer ${newToken.token}`)
-    return await fetch(request)
+      request.headers.set('Authorization', `Bearer ${newToken.token}`)
+      return await fetch(request)
+    }
   }
 
   return response

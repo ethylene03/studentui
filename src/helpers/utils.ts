@@ -9,7 +9,7 @@ function camelToTitle(str: string): string {
     .join(' ')
 }
 
-function getMessage(messageArr: object): string {
+function getMessage(messageArr: string[]): string {
   return Object.entries(messageArr)
     .map(([key, value]) => `In field ${key}, ${value}`)
     .join(', ')
@@ -19,7 +19,7 @@ function getPath() {
   return window.location.pathname.replace(/\//g, '')
 }
 
-function isError(obj: Object): obj is ErrorResponse {
+function isError(obj: object): obj is ErrorResponse {
   return Object.keys(obj).includes('message')
 }
 

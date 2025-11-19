@@ -40,16 +40,16 @@ async function signupUser(credentials: UserCredentials) {
     <h3>Student Management System</h3>
     <h5 class="text-center">Signup</h5>
 
-    <CredentialsForm
+    <credentials-form
       label="Signup"
-      :isLoading="isLoading"
-      :submitError="errorMessage"
-      @onUserSubmit="signupUser"
+      :is-loading="isLoading"
+      :submit-error="errorMessage"
+      @on-user-submit="signupUser"
     />
     <div class="mt-3 text-center">
       <span class="mt-3 text-center btn--link" @click="$router.push('/')">Back to Login</span>
     </div>
 
-    <SuccessToast id="toast--signup" message="Signup successful!" />
+    <success-toast id="toast--signup" message="Signup successful!" />
   </section>
 </template>

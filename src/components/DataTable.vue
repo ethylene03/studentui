@@ -5,8 +5,8 @@ import type { Student } from '@/models/students'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import NoData from './NoData.vue'
-import Pagination from './Pagination.vue'
-import Spinner from './Spinner.vue'
+import TablePagination from './TablePagination.vue'
+import DataSpinner from './DataSpinner.vue'
 
 const dataLoaded = ref<boolean>(false)
 onMounted(() => {
@@ -45,7 +45,7 @@ function handleAction(item: Student | Course, action: string) {
     class="container my-3 table-responsive d-flex flex-column justify-content-between rounded-3 bg-white"
     style="min-height: 400px"
   >
-    <Spinner v-if="isLoading || !dataLoaded" />
+    <data-spinner v-if="isLoading || !dataLoaded" />
     <NoData v-else-if="!isLoading && dataLoaded && data.length === 0" />
     <div v-else style="overflow-y: auto">
       <table class="table table-striped table-hover table-borderless">
@@ -86,7 +86,7 @@ function handleAction(item: Student | Course, action: string) {
         </tbody>
       </table>
     </div>
-    <Pagination
+    <table-pagination
       v-if="!isLoading && dataLoaded"
       :pages="pages"
       :current="currentPage"

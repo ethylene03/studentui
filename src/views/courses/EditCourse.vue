@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import CourseForm from '@/components/CourseForm.vue'
-import Header from '@/components/Header.vue'
-import Navbar from '@/components/Navbar.vue'
+import DataSpinner from '@/components/DataSpinner.vue'
+import NavBar from '@/components/NavBar.vue'
 import NoData from '@/components/NoData.vue'
-import Spinner from '@/components/Spinner.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import { getCourse, updateCourse } from '@/helpers/api/courses'
 import { getMessage, isError } from '@/helpers/utils'
@@ -73,10 +73,10 @@ async function editCourse(course: CourseDetails) {
 
 <template>
   <section id="add-courses" class="w-100 d-flex flex-column">
-    <Navbar />
+    <nav-bar />
 
     <div class="container mt-5 text-center text-md-start">
-      <Header
+      <page-header
         title="Edit Course Details"
         description="Please fill in the details below."
         type="Form"
@@ -85,11 +85,11 @@ async function editCourse(course: CourseDetails) {
     </div>
 
     <div v-if="isLoading || !course" class="container bg-white rounded-3 my-5">
-      <Spinner v-if="isLoading" />
-      <NoData v-else-if="!isLoading && !course" message="Course not found." />
+      <data-spinner v-if="isLoading" />
+      <no-data v-else-if="!isLoading && !course" message="Course not found." />
     </div>
 
-    <CourseForm v-else :course="course" @formData="editCourse" :isLoading="editLoading" />
-    <SuccessToast id="toast--edit-course" message="Course updated successfully!" />
+    <course-form v-else :course="course" @form-data="editCourse" :is-loading="editLoading" />
+    <success-toast id="toast--edit-course" message="Course updated successfully!" />
   </section>
 </template>

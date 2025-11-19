@@ -52,7 +52,7 @@ function validateCredentials() {
         v-model="credentials.username"
         required
       />
-      <div class="form-text text-danger mt-1" v-for="error in errors.username">
+      <div class="form-text text-danger mt-1" v-for="(error, idx) in errors.username" :key="idx">
         {{ error }}
       </div>
     </div>
@@ -65,7 +65,7 @@ function validateCredentials() {
         v-model="credentials.password"
         required
       />
-      <div class="form-text text-danger mt-1" v-for="error in errors.password">
+      <div class="form-text text-danger mt-1" v-for="(error, idx) in errors.password" :key="idx">
         {{ error }}
       </div>
     </div>

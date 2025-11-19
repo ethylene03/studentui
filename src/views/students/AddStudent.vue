@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
-import Navbar from '@/components/Navbar.vue'
+import NavBar from '@/components/NavBar.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import StudentForm from '@/components/StudentForm.vue'
 import SuccessToast from '@/components/SuccessToast.vue'
 import { addStudent } from '@/helpers/api/students'
@@ -41,14 +41,18 @@ async function createStudent(student: StudentDetails) {
 
 <template>
   <section id="add-students" class="w-100 d-flex flex-column">
-    <Navbar />
+    <nav-bar />
 
     <div class="container mt-5 text-center text-md-start">
-      <Header title="Add New Student" description="Please fill in the details below." type="Form" />
+      <page-header
+        title="Add New Student"
+        description="Please fill in the details below."
+        type="Form"
+      />
       <div v-if="errorMessage" class="text-danger">Error: {{ errorMessage }}</div>
     </div>
 
-    <StudentForm @formData="createStudent" :isLoading="isLoading" />
-    <SuccessToast id="toast--add-student" message="Student added successfully!" />
+    <student-form @form-data="createStudent" :is-loading="isLoading" />
+    <success-toast id="toast--add-student" message="Student added successfully!" />
   </section>
 </template>

@@ -78,7 +78,7 @@ const isOpen = ref<boolean>(false)
         </ul>
       </div>
     </div>
-    <SuccessToast id="toast--logout" message="Logged out successfully!" />
+    <success-toast id="toast--logout" message="Logged out successfully!" />
   </nav>
 </template>
 

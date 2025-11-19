@@ -1,9 +1,6 @@
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
 
 export function useBuildQuery(type: 'course' | 'student') {
-  const route = useRoute()
-
   const sortWith = ref<string>('')
   const sortBy = ref<string>('asc')
   const search = ref<string | null>(null)
