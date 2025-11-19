@@ -10,6 +10,7 @@ import EditCourse from '@/views/courses/EditCourse.vue'
 import AddStudent from '@/views/students/AddStudent.vue'
 import EditStudent from '@/views/students/EditStudent.vue'
 import Students from '@/views/students/Students.vue'
+import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,7 @@ const router = createRouter({
       component: EditCourse,
       meta: { requiresAuth: true },
     },
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, meta: { requiresAuth: true } },
   ],
 })
 
