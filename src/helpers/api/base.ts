@@ -51,6 +51,8 @@ async function fetchApi(request: Request) {
   if (response.status === 403) {
     const auth = useAuthorizationStore()
     const newToken = await refreshToken()
+
+    if (!newToken) return
     auth.setToken(newToken.token)
 
     request.headers.set('Authorization', `Bearer ${newToken.token}`)

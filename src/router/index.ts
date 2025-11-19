@@ -43,9 +43,11 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthorizationStore()
 
-  if (!auth.isLoggedIn() && to.name !== 'Login' && to.name !== 'Signup') {
+  if (!auth.isLoggedIn()) {
     const newToken = await refreshToken()
-    if (newToken.token) auth.setToken(newToken.token)
+
+    if (!newToken && to.name !== 'Login' && to.name !== 'Signup') next({ name: 'Login' })
+    else if (newToken) auth.setToken(newToken.token)
   }
 
   if (to.meta.requiresAuth && !auth.isLoggedIn()) {

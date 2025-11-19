@@ -60,7 +60,7 @@ async function logout(): Promise<void> {
   }
 }
 
-async function refreshToken(): Promise<UserToken> {
+async function refreshToken(): Promise<UserToken | null> {
   try {
     const response = await fetch(getUrl('/refresh'), {
       method: 'POST',
@@ -68,8 +68,7 @@ async function refreshToken(): Promise<UserToken> {
       headers,
     })
 
-    // make user login again
-    if (!response.ok) window.location.href = '/'
+    if (!response.ok) return null
 
     return (await response.json()) as UserToken
   } catch (error) {
