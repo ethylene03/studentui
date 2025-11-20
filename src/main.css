@@ -34,6 +34,7 @@
 .btn:disabled {
   background-color: var(--bs-primary-bg-subtle);
   border-color: var(--bs-primary-border-subtle);
+  color: var(--bs-primary);
   opacity: 100%;
 }
 

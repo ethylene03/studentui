@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 export const useAuthorizationStore = defineStore('authorization', {
   state: () => ({
     token: '',
+    id: '',
+    username: '',
   }),
   actions: {
     setToken(newToken: string) {
@@ -13,6 +15,10 @@ export const useAuthorizationStore = defineStore('authorization', {
     },
     isLoggedIn(): boolean {
       return this.token !== ''
+    },
+    setUserDetails(id: string, username: string) {
+      this.id = id
+      this.username = username
     },
   },
 })

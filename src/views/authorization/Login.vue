@@ -26,10 +26,12 @@ async function loginUser(credentials: UserCredentials) {
     if (typeof response.message !== 'string') errorMessage.value = getMessage(response.message)
     else errorMessage.value = response.message
 
+    isLoading.value = false
     return
   }
 
   auth.setToken(response.token)
+  auth.setUserDetails(response.id, response.username)
 
   const toastInstance = new Toast(toast as HTMLElement)
   toastInstance.show()

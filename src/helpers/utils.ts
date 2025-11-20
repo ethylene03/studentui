@@ -11,7 +11,10 @@ function camelToTitle(str: string): string {
 
 function getMessage(messageArr: string[]): string {
   return Object.entries(messageArr)
-    .map(([key, value]) => `In field ${key}, ${value}`)
+    .map(
+      ([key, value]) =>
+        `In field ${key}, ${typeof value !== 'string' ? (value as string[]).join(' ') : value}`,
+    )
     .join(', ')
 }
 

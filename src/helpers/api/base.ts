@@ -2,8 +2,11 @@ import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import { refreshToken } from './authorization'
 import type { StudentDetails } from '@/models/students'
 import type { CourseDetails } from '@/models/courses'
+import type { UserCredentials, UserPasswordChange } from '@/models/users'
 
 const baseUrl = 'http://localhost:8080'
+
+type DataType = StudentDetails | CourseDetails | UserCredentials | UserPasswordChange
 
 function getHeaders() {
   const auth = useAuthorizationStore()
@@ -15,7 +18,7 @@ function getHeaders() {
   })
 }
 
-function POST(url: string, data: StudentDetails | CourseDetails) {
+function POST(url: string, data: DataType) {
   return new Request(baseUrl + url, {
     method: 'POST',
     headers: getHeaders(),
@@ -32,7 +35,7 @@ function GET(url: string, query?: Record<string, string>, signal?: AbortSignal) 
   })
 }
 
-function PUT(url: string, data: StudentDetails | CourseDetails) {
+function PUT(url: string, data: DataType) {
   return new Request(baseUrl + url, {
     method: 'PUT',
     headers: getHeaders(),
@@ -56,6 +59,7 @@ async function fetchApi(request: Request): Promise<Response> {
 
     if (newToken) {
       auth.setToken(newToken.token)
+      auth.setUserDetails(newToken.id, newToken.username)
 
       request.headers.set('Authorization', `Bearer ${newToken.token}`)
       return await fetch(request)

@@ -5,6 +5,13 @@ export interface UserToken {
 }
 
 export type User = Omit<UserToken, 'token'>
+export type UserProfile = Partial<UserCredentials> & { newPassword?: string }
+
+export type UserPasswordChange = {
+  username: string
+  oldPassword: string
+  newPassword: string
+}
 
 export interface UserCredentials {
   username: string

@@ -50,10 +50,9 @@ const isOpen = ref<boolean>(false)
           <li class="nav-item">
             <a
               id="students"
-              class="nav-link"
+              class="nav-link cursor-pointer"
               :class="{ active: currentPath === 'students' }"
               @click="$router.push('/students')"
-              style="cursor: pointer"
             >
               Students
             </a>
@@ -61,12 +60,21 @@ const isOpen = ref<boolean>(false)
           <li class="nav-item">
             <a
               id="courses"
-              class="nav-link"
+              class="nav-link cursor-pointer"
               :class="{ active: currentPath === 'courses' }"
               @click="$router.push('/courses')"
-              style="cursor: pointer"
             >
               Courses
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              id="profile"
+              class="nav-link cursor-pointer"
+              :class="{ active: currentPath === 'profile' }"
+              @click="$router.push('/profile')"
+            >
+              My Profile
             </a>
           </li>
           <li class="border-start ps-4 nav-item">
