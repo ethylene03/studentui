@@ -46,7 +46,9 @@ const isOpen = ref<boolean>(false)
         <span class="navbar-toggler-icon"></span>
       </button>
       <div :class="[{ collapse: !isOpen }, 'navbar-collapse', { show: isOpen }]" id="navbarNav">
-        <ul class="nav nav-underline flex-column align-items-start mt-3 mt-md-0 flex-md-row ms-auto gap-2 gap-md-5">
+        <ul
+          class="nav nav-underline flex-column align-items-start mt-3 mt-md-0 flex-md-row ms-auto gap-2 gap-md-5"
+        >
           <li class="nav-item">
             <a
               id="students"
@@ -88,7 +90,7 @@ const isOpen = ref<boolean>(false)
             </a>
           </li>
           <li class="ps-md-4 mt-5 my-md-auto nav-item">
-            <a class="nav-link" @click="logoutUser">
+            <a class="nav-link cursor-pointer" @click="logoutUser">
               <i class="fas fa-right-from-bracket me-1"></i>
               Logout
             </a>

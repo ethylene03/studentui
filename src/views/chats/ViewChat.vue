@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import ChatBox from '@/components/ChatBox.vue'
 import NavBar from '@/components/NavBar.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import { getMessages } from '@/helpers/api/chats'
-import { connect, disconnect, sendMessage } from '@/helpers/api/websocket'
+import { connect, disconnect, stompMessage } from '@/helpers/api/websocket'
 import { useAuthorizationStore } from '@/helpers/stores/authorization'
 import { isError } from '@/helpers/utils'
 import type { ChatMessage } from '@/models/chats'
@@ -15,6 +16,7 @@ onMounted(async () => {
       chatBox.value?.scrollTo(0, chatBox.value.scrollHeight)
     })
   })
+
   await fetchMessageHistory()
   chatBox.value?.scrollTo(0, chatBox.value.scrollHeight)
 })
@@ -43,7 +45,7 @@ async function fetchMessageHistory() {
   controller.value = new AbortController()
 
   const currentScrollPosition = chatBox.value?.scrollHeight || 0
-  const query = { page: currentPage.value.toString(), size: '20', sort: 'createdAt,desc' }
+  const query = { page: currentPage.value.toString(), size: '10', sort: 'createdAt,desc' }
 
   const response = await getMessages(query, controller.value.signal)
   if (!response || isError(response)) {
@@ -66,7 +68,7 @@ async function fetchMessageHistory() {
 
 const text = ref('')
 
-function sendMsg() {
+function sendMessage() {
   if (!text.value.trim()) return
 
   const message: Partial<ChatMessage> = {
@@ -74,7 +76,7 @@ function sendMsg() {
     message: text.value.trim(),
   }
 
-  sendMessage(message)
+  stompMessage(message)
   text.value = ''
 }
 
@@ -82,13 +84,17 @@ function sendMsg() {
 
 const chatBox = ref<HTMLElement | null>(null)
 
-function onScroll() {
+async function onScroll() {
   if (!chatBox.value) return
 
   if (chatBox.value.scrollTop === 0 && !isFetching.value) {
     if (currentPage.value + 1 >= pages.value) return
     currentPage.value += 1
-    fetchMessageHistory()
+    await fetchMessageHistory()
+
+    if (isErrorFetching.value) {
+      currentPage.value -= 1
+    }
   }
 }
 </script>
@@ -104,34 +110,14 @@ function onScroll() {
       />
     </div>
 
-    <div
-      ref="chatBox"
-      class="container border bg-white rounded py-3 px-4 my-2"
-      style="height: 500px; overflow-y: scroll"
-      @scroll="onScroll"
-    >
-      <span v-if="isFetching" class="d-block text-center my-2">Loading messages...</span>
-      <span v-if="isErrorFetching" class="d-block text-center my-2 text-danger">
-        Error fetching messages. Please try again later.
-      </span>
-
-      <div
-        v-for="(message, index) in messages"
-        :key="index"
-        class="message--container"
-        :class="{ owner: message.userName === auth.name }"
-      >
-        <span
-          class="message--user mt-3"
-          :hidden="index - 1 >= 0 && messages[index - 1]?.userName === message.userName"
-        >
-          {{ message.userName }}
-        </span>
-        <span class="message--message">
-          {{ message.message }}
-        </span>
-      </div>
-    </div>
+    <ChatBox
+      :is-fetching="isFetching"
+      :is-error-fetching="isErrorFetching"
+      :messages="messages"
+      :owner="auth.name"
+      @on-scroll="onScroll"
+      @box-element="chatBox = $event"
+    />
 
     <div class="container input-group-text p-3 gap-3 border">
       <input
@@ -139,45 +125,9 @@ function onScroll() {
         class="form-control py-2 px-3"
         placeholder="Type your message..."
         v-model="text"
-        @keyup.enter="sendMsg"
+        @keyup.enter="sendMessage"
       />
-      <button class="btn btn-primary px-5 py-2" @click="sendMsg">Send</button>
+      <button class="btn btn-primary px-5 py-2" @click="sendMessage">Send</button>
     </div>
   </section>
 </template>
-
-<style scoped>
-.message--container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 0.5rem;
-  gap: 0.3rem;
-}
-
-.message--user {
-  font-weight: 300;
-  font-size: 0.8rem;
-  padding: 0 0.5rem;
-}
-
-.message--message {
-  background-color: var(--bs-secondary-bg);
-  padding: 0.5rem 1.2rem;
-  border-radius: 1.5rem;
-  width: fit-content;
-}
-
-.message--container.owner {
-  align-items: flex-end;
-}
-
-.message--container.owner .message--user {
-  display: none;
-}
-
-.message--container.owner .message--message {
-  background-color: var(--bs-primary);
-  color: white;
-}
-</style>

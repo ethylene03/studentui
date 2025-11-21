@@ -14,11 +14,9 @@ export function connect(onMessageCallback: (msg: ChatMessage) => void): void {
       Authorization: `Bearer ${token}`,
     },
     onConnect: () => {
-      console.log('Connected!')
       stompClient?.subscribe('/topic/global', (message) =>
         onMessageCallback(JSON.parse(message.body)),
       )
-      console.log('Subscribed to topic')
     },
     onStompError: (frame) => {
       console.error('Broker reported error:', frame.headers.message, frame.body)
@@ -28,7 +26,7 @@ export function connect(onMessageCallback: (msg: ChatMessage) => void): void {
   stompClient.activate()
 }
 
-export function sendMessage(message: Partial<ChatMessage>): void {
+export function stompMessage(message: Partial<ChatMessage>): void {
   if (!stompClient?.connected) {
     console.error('STOMP client not connected yet')
     return

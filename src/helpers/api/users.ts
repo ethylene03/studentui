@@ -1,5 +1,5 @@
 import type { ErrorResponse } from '@/models/global'
-import type { User, UserCredentials, UserPasswordChange } from '@/models/users'
+import type { User, UserPasswordChange } from '@/models/users'
 import { DELETE, fetchApi, PUT } from './base'
 
 async function changePassword(
@@ -20,9 +20,11 @@ async function changePassword(
   }
 }
 
-async function changeUsername(id: string, details: UserCredentials): Promise<User | ErrorResponse> {
+type UserUpdateDetails = Omit<User, 'id'> & { password: string }
+
+async function updateUser(id: string, details: UserUpdateDetails): Promise<User | ErrorResponse> {
   try {
-    const response = await fetchApi(PUT('/users/' + id + '/username', details))
+    const response = await fetchApi(PUT('/users/' + id, details))
 
     if (!response.ok) return (await response.json()) as ErrorResponse
 
@@ -48,4 +50,4 @@ async function deleteUser(id: string): Promise<void | ErrorResponse> {
   }
 }
 
-export { changePassword, changeUsername, deleteUser }
+export { changePassword, deleteUser, updateUser }

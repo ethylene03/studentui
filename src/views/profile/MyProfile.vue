@@ -16,13 +16,13 @@ onMounted(() => {
 })
 
 const { showDeleteModal, deleteItem } = useDeleteItem('user')
-const { errorMessage, isChangePassword, isChangeUsername, isLoading, submitUser } = useSubmitUser()
+const { errorMessage, isChangePassword, isEdit, isLoading, submitUser } = useSubmitUser()
 const router = useRouter()
 
 /*<--------- FORM STATE --------->*/
 
 function handleEdit(edit: boolean) {
-  isChangeUsername.value = edit
+  isEdit.value = edit
   isChangePassword.value = !edit
 }
 
@@ -45,13 +45,14 @@ function fetchUserProfile() {
 
 async function submitUserProfile() {
   await submitUser(user.value)
-  resetPage()
+
+  if (errorMessage.value === '') resetPage()
 }
 
 /*<--------- CANCEL EDITING --------->*/
 
 function resetPage() {
-  isChangeUsername.value = false
+  isEdit.value = false
   isChangePassword.value = false
   errorMessage.value = ''
   fetchUserProfile()
@@ -60,13 +61,15 @@ function resetPage() {
 /*<--------- DELETE ACCOUNT --------->*/
 
 async function deleteAccount() {
-  await deleteItem()
-  await logout()
-  userStore.clearToken()
+  const response = await deleteItem()
+  if (response) {
+    await logout()
+    userStore.clearToken()
 
-  setTimeout(() => {
-    router.push('/')
-  }, 1000)
+    setTimeout(() => {
+      router.push('/')
+    }, 1000)
+  }
 }
 </script>
 
@@ -79,8 +82,8 @@ async function deleteAccount() {
         id="profile--menu"
         class="my-5 d-flex flex-column flex-md-row-reverse gap-3 justify-content-start"
       >
-        <button class="btn btn-primary px-5" @click="handleEdit(true)" :disabled="isChangeUsername">
-          Change Username
+        <button class="btn btn-primary px-5" @click="handleEdit(true)" :disabled="isEdit">
+          Edit Profile
         </button>
         <button
           class="btn btn-outline-primary px-5"
@@ -113,10 +116,10 @@ async function deleteAccount() {
         <input
           id="name"
           type="text"
-          class="form-control-plaintext text-primary"
+          :class="'form-control' + (isChangePassword || !isEdit ? '-plaintext text-primary' : '')"
           placeholder="Display Name"
           v-model="user.name"
-          readonly
+          :readonly="isChangePassword || !isEdit"
         />
       </div>
 
@@ -125,17 +128,14 @@ async function deleteAccount() {
         <input
           id="username"
           type="text"
-          :class="
-            'form-control' +
-            (isChangePassword || !isChangeUsername ? '-plaintext text-primary' : '')
-          "
+          :class="'form-control' + (isChangePassword || !isEdit ? '-plaintext text-primary' : '')"
           placeholder="Username"
           v-model="user.username"
-          :readonly="isChangePassword || !isChangeUsername"
+          :readonly="isChangePassword || !isEdit"
         />
       </div>
 
-      <div v-if="isChangePassword || isChangeUsername" class="input-group-text mb-4 gap-3">
+      <div v-if="isChangePassword || isEdit" class="input-group-text mb-4 gap-3">
         <label for="oldPassword" class="w-25">Current Password</label>
         <input
           id="oldPassword"
@@ -159,7 +159,7 @@ async function deleteAccount() {
 
       <p class="text-danger">{{ errorMessage }}</p>
 
-      <div v-if="isChangePassword || isChangeUsername" class="d-flex gap-4 mt-5">
+      <div v-if="isChangePassword || isEdit" class="d-flex gap-4 mt-5">
         <button type="button" class="btn btn-outline-primary flex-fill" @click="resetPage">
           Cancel
         </button>

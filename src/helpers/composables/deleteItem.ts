@@ -17,8 +17,8 @@ export function useDeleteItem(type: 'course' | 'student' | 'user') {
     }
   }
 
-  async function deleteItem() {
-    if (!toDeleteId.value) return
+  async function deleteItem(): Promise<boolean> {
+    if (!toDeleteId.value) return false
     const toast = document.getElementById('toast--delete')
     const modal = document.getElementById('modal--delete')
 
@@ -35,7 +35,10 @@ export function useDeleteItem(type: 'course' | 'student' | 'user') {
 
       const toastInstance = new Toast(toast as HTMLElement)
       toastInstance.show()
+      return true
     }
+
+    return false
   }
 
   return { showDeleteModal, deleteItem }

@@ -2,20 +2,21 @@ import type { ErrorResponse } from '@/models/global'
 import type { User, UserProfile, UserToken } from '@/models/users'
 import { Toast } from 'bootstrap'
 import { ref } from 'vue'
-import { changePassword, changeUsername } from '../api/users'
+import { changePassword, updateUser } from '../api/users'
 import { useAuthorizationStore } from '../stores/authorization'
 import { getMessage, isError } from '../utils'
 
 export function useSubmitUser() {
   const errorMessage = ref<string>('')
   const isChangePassword = ref<boolean>(false)
-  const isChangeUsername = ref<boolean>(false)
+  const isEdit = ref<boolean>(false)
   const isLoading = ref(false)
 
   const userStore = useAuthorizationStore()
 
   async function submitUser(user: UserProfile) {
     isLoading.value = true
+    errorMessage.value = ''
     const toast = document.getElementById('toast--update')
     const toastInstance = new Toast(toast as HTMLElement)
     let response: User | ErrorResponse
@@ -26,8 +27,9 @@ export function useSubmitUser() {
         oldPassword: user.password as string,
         newPassword: user.newPassword as string,
       })
-    } else if (isChangeUsername.value) {
-      response = await changeUsername(userStore.id, {
+    } else if (isEdit.value) {
+      response = await updateUser(userStore.id, {
+        name: user.name as string,
         username: user.username as string,
         password: user.password as string,
       })
@@ -54,5 +56,5 @@ export function useSubmitUser() {
     isLoading.value = false
   }
 
-  return { errorMessage, isChangePassword, isChangeUsername, isLoading, submitUser }
+  return { errorMessage, isChangePassword, isEdit, isLoading, submitUser }
 }
