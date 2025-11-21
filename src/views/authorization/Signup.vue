@@ -44,6 +44,7 @@ async function signupUser(credentials: UserCredentials) {
       label="Signup"
       :is-loading="isLoading"
       :submit-error="errorMessage"
+      type="signup"
       @on-user-submit="signupUser"
     />
     <div class="mt-3 text-center">

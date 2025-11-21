@@ -58,7 +58,7 @@ router.beforeEach(async (to, from, next) => {
     if (!newToken && to.name !== 'Login' && to.name !== 'Signup') next({ name: 'Login' })
     else if (newToken) {
       auth.setToken(newToken.token)
-      auth.setUserDetails(newToken.id, newToken.username)
+      auth.setUserDetails(newToken)
     }
   }
 

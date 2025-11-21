@@ -1,5 +1,6 @@
 export interface UserToken {
   id: string
+  name: string
   username: string
   token: string
 }
@@ -14,6 +15,7 @@ export type UserPasswordChange = {
 }
 
 export interface UserCredentials {
+  name?: string
   username: string
   password: string
 }

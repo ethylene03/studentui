@@ -31,7 +31,7 @@ async function loginUser(credentials: UserCredentials) {
   }
 
   auth.setToken(response.token)
-  auth.setUserDetails(response.id, response.username)
+  auth.setUserDetails(response)
 
   const toastInstance = new Toast(toast as HTMLElement)
   toastInstance.show()
@@ -51,6 +51,7 @@ async function loginUser(credentials: UserCredentials) {
       label="Login"
       :is-loading="isLoading"
       :submit-error="errorMessage"
+      type="login"
       @on-user-submit="loginUser"
     />
 

@@ -1,9 +1,11 @@
+import type { UserToken } from '@/models/users'
 import { defineStore } from 'pinia'
 
 export const useAuthorizationStore = defineStore('authorization', {
   state: () => ({
     token: '',
     id: '',
+    name: '',
     username: '',
   }),
   actions: {
@@ -16,9 +18,10 @@ export const useAuthorizationStore = defineStore('authorization', {
     isLoggedIn(): boolean {
       return this.token !== ''
     },
-    setUserDetails(id: string, username: string) {
-      this.id = id
-      this.username = username
+    setUserDetails(response: UserToken) {
+      this.id = response.id
+      this.name = response.name
+      this.username = response.username
     },
   },
 })

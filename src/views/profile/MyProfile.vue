@@ -35,7 +35,10 @@ const userStore = useAuthorizationStore()
 function fetchUserProfile() {
   user.value = {}
   userId.value = userStore.id
-  user.value.username = userStore.username
+  user.value = {
+    name: userStore.name,
+    username: userStore.username,
+  }
 }
 
 /*<--------- SUBMIT USER PROFILE --------->*/
@@ -71,7 +74,7 @@ async function deleteAccount() {
   <section id="profile" class="w-100">
     <nav-bar />
     <div class="container mt-5 text-center text-md-start">
-      <page-header title="My Profile" description="" type="Main" />
+      <page-header title="My Profile" :description="'Welcome, ' + user.name" type="Main" />
       <div
         id="profile--menu"
         class="my-5 d-flex flex-column flex-md-row-reverse gap-3 justify-content-start"
@@ -101,6 +104,18 @@ async function deleteAccount() {
           class="form-control-plaintext text-primary"
           placeholder="User ID"
           v-model="userId"
+          readonly
+        />
+      </div>
+
+      <div class="input-group-text mb-4 gap-3">
+        <label for="name" class="w-25">Display Name</label>
+        <input
+          id="name"
+          type="text"
+          class="form-control-plaintext text-primary"
+          placeholder="Display Name"
+          v-model="user.name"
           readonly
         />
       </div>

@@ -59,7 +59,7 @@ async function fetchApi(request: Request): Promise<Response> {
 
     if (newToken) {
       auth.setToken(newToken.token)
-      auth.setUserDetails(newToken.id, newToken.username)
+      auth.setUserDetails(newToken)
 
       request.headers.set('Authorization', `Bearer ${newToken.token}`)
       return await fetch(request)

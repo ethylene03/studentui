@@ -44,7 +44,7 @@ export function useSubmitUser() {
       return
     }
 
-    userStore.setUserDetails(response.id, response.username)
+    userStore.setUserDetails(response)
 
     toastInstance.show()
     isLoading.value = false
