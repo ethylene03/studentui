@@ -90,7 +90,7 @@ function handleAction(item: Student | Course, action: string) {
       v-if="!isLoading && dataLoaded"
       :pages="pages"
       :current="currentPage"
-      @on-change-page="(e) => $emit('onChangePage', e)"
+      @on-change-page="(e: number) => $emit('onChangePage', e)"
     />
   </section>
 </template>

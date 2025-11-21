@@ -126,7 +126,7 @@ watch(search, () => {
       :data="courses"
       :pages="pages"
       :current-page="currentPage"
-      @on-change-page="(e) => (currentPage = e)"
+      @on-change-page="(e: number) => (currentPage = e)"
       @delete-item="showDeleteModal"
       :is-loading="isLoading"
     />
