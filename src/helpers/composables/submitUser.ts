@@ -1,5 +1,5 @@
 import type { ErrorResponse } from '@/models/global'
-import type { User, UserProfile } from '@/models/users'
+import type { User, UserProfile, UserToken } from '@/models/users'
 import { Toast } from 'bootstrap'
 import { ref } from 'vue'
 import { changePassword, changeUsername } from '../api/users'
@@ -44,7 +44,11 @@ export function useSubmitUser() {
       return
     }
 
-    userStore.setUserDetails(response)
+    userStore.setUserDetails({
+      id: response.id,
+      name: response.name,
+      username: response.username,
+    } as UserToken)
 
     toastInstance.show()
     isLoading.value = false

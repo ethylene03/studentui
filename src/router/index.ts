@@ -12,6 +12,7 @@ import AddStudent from '@/views/students/AddStudent.vue'
 import EditStudent from '@/views/students/EditStudent.vue'
 import ViewStudents from '@/views/students/ViewStudents.vue'
 import MyProfile from '@/views/profile/MyProfile.vue'
+import ViewChat from '@/views/ViewChat.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     { path: '/profile', name: 'Profile', component: MyProfile, meta: { requiresAuth: true } },
+    { path: '/chat', name: 'Chat', component: ViewChat, meta: { requiresAuth: true } },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
